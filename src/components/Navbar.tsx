@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { ShoppingBag, Search, Menu, X, User } from "lucide-react";
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
 import { Button } from "./ui/Button";
 import { cn } from "../lib/utils";
+import { Link } from "react-router-dom";
 
 export const Navbar = () => {
     const [isScrolled, setIsScrolled] = useState(false);
@@ -14,10 +15,9 @@ export const Navbar = () => {
     });
 
     const navLinks = [
-        { name: "Collections", href: "#collections" },
-        { name: "New Arrivals", href: "#new-arrivals" },
-        { name: "Our Story", href: "#our-story" },
-        { name: "Journal", href: "#journal" },
+        { name: "Home", href: "/" },
+        { name: "Our Story", href: "/about" },
+        { name: "Contact", href: "/contact" },
     ];
 
     return (
@@ -41,20 +41,20 @@ export const Navbar = () => {
                         whileHover={{ scale: 1.05 }}
                         className="flex-shrink-0"
                     >
-                        <a href="#" className={cn(
+                        <Link to="/" className={cn(
                             "text-2xl font-display font-bold tracking-[-0.04em] transition-colors duration-300",
                             isScrolled ? "text-primary" : "text-white"
                         )}>
                             HEEMAN<span className="text-accent">.</span>
-                        </a>
+                        </Link>
                     </motion.div>
 
                     {/* Center Links - Desktop */}
                     <div className="hidden lg:flex items-center gap-10">
                         {navLinks.map((link) => (
-                            <a
+                            <Link
                                 key={link.name}
-                                href={link.href}
+                                to={link.href}
                                 className={cn(
                                     "relative text-[11px] font-bold uppercase tracking-[0.2em] transition-colors duration-300 group overflow-hidden",
                                     isScrolled ? "text-primary/70 hover:text-primary" : "text-white/70 hover:text-white"
@@ -62,7 +62,7 @@ export const Navbar = () => {
                             >
                                 {link.name}
                                 <span className="absolute bottom-0 left-0 w-full h-[1px] bg-accent translate-x-[-101%] group-hover:translate-x-0 transition-transform duration-500 ease-out" />
-                            </a>
+                            </Link>
                         ))}
                     </div>
 
@@ -101,16 +101,18 @@ export const Navbar = () => {
                             {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
                         </Button>
 
-                        <Button
-                            className={cn(
-                                "hidden md:flex ml-2 rounded-none px-6 font-bold tracking-widest text-[10px] uppercase transition-all duration-300",
-                                isScrolled
-                                    ? "bg-primary text-white hover:bg-accent"
-                                    : "bg-white text-primary hover:bg-accent hover:text-white"
-                            )}
-                        >
-                            Contact Us
-                        </Button>
+                        <Link to="/contact">
+                            <Button
+                                className={cn(
+                                    "hidden md:flex ml-2 rounded-none px-6 font-bold tracking-widest text-[10px] uppercase transition-all duration-300",
+                                    isScrolled
+                                        ? "bg-primary text-white hover:bg-accent"
+                                        : "bg-white text-primary hover:bg-accent hover:text-white"
+                                )}
+                            >
+                                Contact Us
+                            </Button>
+                        </Link>
                     </div>
                 </div>
             </motion.nav>
@@ -134,23 +136,28 @@ export const Navbar = () => {
 
                         <div className="flex-1 overflow-y-auto p-12 flex flex-col gap-10">
                             {navLinks.map((link, i) => (
-                                <motion.a
+                                <motion.div
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: i * 0.1 }}
                                     key={link.name}
-                                    href={link.href}
-                                    className="text-4xl font-display group flex items-baseline gap-4"
-                                    onClick={() => setIsMobileMenuOpen(false)}
                                 >
-                                    <span className="text-accent text-sm font-sans font-bold">{`0${i + 1}`}</span>
-                                    <span className="group-hover:translate-x-4 transition-transform duration-500">{link.name}</span>
-                                </motion.a>
+                                    <Link
+                                        to={link.href}
+                                        className="text-4xl font-display group flex items-baseline gap-4"
+                                        onClick={() => setIsMobileMenuOpen(false)}
+                                    >
+                                        <span className="text-accent text-sm font-sans font-bold">{`0${i + 1}`}</span>
+                                        <span className="group-hover:translate-x-4 transition-transform duration-500">{link.name}</span>
+                                    </Link>
+                                </motion.div>
                             ))}
                         </div>
 
                         <div className="p-12 border-t">
-                            <Button className="w-full h-16 rounded-none text-lg">Inquire Now</Button>
+                            <Link to="/contact" onClick={() => setIsMobileMenuOpen(false)}>
+                                <Button className="w-full h-16 rounded-none text-lg">Inquire Now</Button>
+                            </Link>
                         </div>
                     </motion.div>
                 )}
