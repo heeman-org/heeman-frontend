@@ -5,20 +5,25 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Shop from "./pages/Shop";
 import ProductDetail from "./pages/ProductDetail";
+import Cart from "./pages/Cart";
+import { CartProvider } from "./context/CartContext";
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Home />} />
-          <Route path="about" element={<About />} />
-          <Route path="contact" element={<Contact />} />
-          <Route path="shop" element={<Shop />} />
-          <Route path="shop/:id" element={<ProductDetail />} />
-        </Route>
-      </Routes>
-    </Router>
+    <CartProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            <Route index element={<Home />} />
+            <Route path="about" element={<About />} />
+            <Route path="contact" element={<Contact />} />
+            <Route path="shop" element={<Shop />} />
+            <Route path="shop/:id" element={<ProductDetail />} />
+            <Route path="cart" element={<Cart />} />
+          </Route>
+        </Routes>
+      </Router>
+    </CartProvider>
   );
 }
 

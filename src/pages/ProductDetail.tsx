@@ -4,11 +4,12 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
     Star, ShoppingBag, Heart, Share2,
     ChevronRight, ShieldCheck, Truck, RotateCcw,
-    Plus, Minus, Check
+    Plus, Minus, Check, CheckCircle2
 } from "lucide-react";
 import { Button } from "../components/ui/Button";
 import { products, type Product } from "../data/products";
 import { cn } from "../lib/utils";
+import { useCart } from "../context/CartContext";
 
 export default function ProductDetail() {
     const { id } = useParams();
@@ -16,6 +17,8 @@ export default function ProductDetail() {
     const [activeImage, setActiveImage] = useState("");
     const [quantity, setQuantity] = useState(1);
     const [activeTab, setActiveTab] = useState("description");
+    const [addedToCart, setAddedToCart] = useState(false);
+    const { addToCart } = useCart();
 
     useEffect(() => {
         const found = products.find(p => p.id === id);
@@ -24,6 +27,13 @@ export default function ProductDetail() {
             setActiveImage(found.gallery[0] || found.image);
         }
     }, [id]);
+
+    const handleAddToCart = () => {
+        if (!product) return;
+        addToCart(product, quantity);
+        setAddedToCart(true);
+        setTimeout(() => setAddedToCart(false), 3000);
+    };
 
     if (!product) return (
         <div className="h-screen flex items-center justify-center">
@@ -154,8 +164,23 @@ export default function ProductDetail() {
                                         <Plus size={16} />
                                     </button>
                                 </div>
-                                <Button size="lg" className="h-14 flex-1 rounded-none bg-primary text-white hover:bg-accent transition-all text-sm font-bold tracking-widest uppercase">
-                                    <ShoppingBag size={18} className="mr-3" /> Add To Private Collection
+                                <Button
+                                    size="lg"
+                                    onClick={handleAddToCart}
+                                    className={cn(
+                                        "h-14 flex-1 rounded-none transition-all text-sm font-bold tracking-widest uppercase flex items-center justify-center gap-3",
+                                        addedToCart ? "bg-green-600 text-white" : "bg-primary text-white hover:bg-accent"
+                                    )}
+                                >
+                                    {addedToCart ? (
+                                        <>
+                                            <CheckCircle2 size={18} /> Added to Collection
+                                        </>
+                                    ) : (
+                                        <>
+                                            <ShoppingBag size={18} /> Add To Private Collection
+                                        </>
+                                    )}
                                 </Button>
                             </div>
 
@@ -201,54 +226,68 @@ export default function ProductDetail() {
                     </div>
 
                     <div className="bg-secondary/20 p-8 md:p-16">
-                        {activeTab === "description" && (
-                            <div className="grid md:grid-cols-2 gap-16 items-center">
-                                <div className="space-y-6">
-                                    <h3 className="text-3xl font-display mb-8">Craftsmanship and Soul</h3>
-                                    <p className="text-foreground/60 leading-relaxed italic border-l-4 border-accent pl-8 py-4 mb-8">
-                                        "Every piece we create is a balance between the structure of modern geometry and the warmth of organic life."
-                                    </p>
-                                    <ul className="grid grid-cols-1 gap-4">
-                                        {product.features.map((f, i) => (
-                                            <li key={i} className="flex gap-4 text-sm text-foreground/70">
-                                                <Check size={16} className="text-accent mt-0.5 shrink-0" /> {f}
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-                                <div className="aspect-[4/3] overflow-hidden">
-                                    <img
-                                        src="https://images.unsplash.com/photo-1540518614846-7eded433c457?auto=format&fit=crop&q=80&w=1200"
-                                        alt="Process"
-                                        className="w-full h-full object-cover grayscale opacity-50"
-                                    />
-                                </div>
-                            </div>
-                        )}
+                        <AnimatePresence mode="wait">
+                            {activeTab === "description" && (
+                                <motion.div
+                                    key="desc"
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -10 }}
+                                    className="grid md:grid-cols-2 gap-16 items-center"
+                                >
+                                    <div className="space-y-6">
+                                        <h3 className="text-3xl font-display mb-8">Craftsmanship and Soul</h3>
+                                        <p className="text-foreground/60 leading-relaxed italic border-l-4 border-accent pl-8 py-4 mb-8">
+                                            "Every piece we create is a balance between the structure of modern geometry and the warmth of organic life."
+                                        </p>
+                                        <ul className="grid grid-cols-1 gap-4">
+                                            {product.features.map((f, i) => (
+                                                <li key={i} className="flex gap-4 text-sm text-foreground/70">
+                                                    <Check size={16} className="text-accent mt-0.5 shrink-0" /> {f}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                    <div className="aspect-[4/3] overflow-hidden">
+                                        <img
+                                            src="https://images.unsplash.com/photo-1540518614846-7eded433c457?auto=format&fit=crop&q=80&w=1200"
+                                            alt="Process"
+                                            className="w-full h-full object-cover grayscale opacity-50"
+                                        />
+                                    </div>
+                                </motion.div>
+                            )}
 
-                        {activeTab === "dimensions" && (
-                            <div className="max-w-3xl">
-                                <h3 className="text-3xl font-display mb-12">Technical Specifications</h3>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-24 gap-y-12">
-                                    <div className="space-y-4">
-                                        <span className="text-[10px] uppercase tracking-widest font-bold opacity-30">Material Composition</span>
-                                        <p className="text-lg font-display">{product.details.material}</p>
+                            {activeTab === "dimensions" && (
+                                <motion.div
+                                    key="dims"
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -10 }}
+                                    className="max-w-3xl"
+                                >
+                                    <h3 className="text-3xl font-display mb-12">Technical Specifications</h3>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-24 gap-y-12">
+                                        <div className="space-y-4">
+                                            <span className="text-[10px] uppercase tracking-widest font-bold opacity-30">Material Composition</span>
+                                            <p className="text-lg font-display">{product.details.material}</p>
+                                        </div>
+                                        <div className="space-y-4">
+                                            <span className="text-[10px] uppercase tracking-widest font-bold opacity-30">Overall Dimensions</span>
+                                            <p className="text-lg font-display">{product.details.dimensions}</p>
+                                        </div>
+                                        <div className="space-y-4">
+                                            <span className="text-[10px] uppercase tracking-widest font-bold opacity-30">Artisan Finish</span>
+                                            <p className="text-lg font-display">{product.details.finish}</p>
+                                        </div>
+                                        <div className="space-y-4">
+                                            <span className="text-[10px] uppercase tracking-widest font-bold opacity-30">Gross Weight</span>
+                                            <p className="text-lg font-display">{product.details.weight}</p>
+                                        </div>
                                     </div>
-                                    <div className="space-y-4">
-                                        <span className="text-[10px] uppercase tracking-widest font-bold opacity-30">Overall Dimensions</span>
-                                        <p className="text-lg font-display">{product.details.dimensions}</p>
-                                    </div>
-                                    <div className="space-y-4">
-                                        <span className="text-[10px] uppercase tracking-widest font-bold opacity-30">Artisan Finish</span>
-                                        <p className="text-lg font-display">{product.details.finish}</p>
-                                    </div>
-                                    <div className="space-y-4">
-                                        <span className="text-[10px] uppercase tracking-widest font-bold opacity-30">Gross Weight</span>
-                                        <p className="text-lg font-display">{product.details.weight}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
                     </div>
                 </div>
 
@@ -279,6 +318,26 @@ export default function ProductDetail() {
                     </section>
                 )}
             </div>
+
+            {/* Success Notification Portal-like animation */}
+            <AnimatePresence>
+                {addedToCart && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 50, x: "-50%" }}
+                        animate={{ opacity: 1, y: 0, x: "-50%" }}
+                        exit={{ opacity: 0, y: 20, x: "-50%" }}
+                        className="fixed bottom-12 left-1/2 z-[100] bg-primary text-white px-8 py-4 shadow-2xl flex items-center gap-4 border border-accent/20"
+                    >
+                        <div className="size-8 bg-accent rounded-full flex items-center justify-center">
+                            <CheckCircle2 size={16} />
+                        </div>
+                        <div>
+                            <p className="text-xs font-bold uppercase tracking-widest">Added to collection</p>
+                            <Link to="/cart" className="text-[10px] text-accent font-bold uppercase tracking-widest hover:underline">View Private Cart</Link>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 }

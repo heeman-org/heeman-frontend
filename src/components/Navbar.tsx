@@ -4,11 +4,13 @@ import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-
 import { Button } from "./ui/Button";
 import { cn } from "../lib/utils";
 import { Link } from "react-router-dom";
+import { useCart } from "../context/CartContext";
 
 export const Navbar = () => {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const { scrollY } = useScroll();
+    const { totalItems } = useCart();
 
     useMotionValueEvent(scrollY, "change", (latest) => {
         setIsScrolled(latest > 50);
@@ -81,16 +83,20 @@ export const Navbar = () => {
                                 <User size={16} />
                             </Button>
                             <div className={cn("w-[1px] h-4 bg-current opacity-10")} />
-                            <Button variant="ghost" size="icon" className={cn("size-8 rounded-full relative", isScrolled ? "text-primary" : "text-white")}>
-                                <ShoppingBag size={16} />
-                                <motion.span
-                                    initial={{ scale: 0 }}
-                                    animate={{ scale: 1 }}
-                                    className="absolute top-1 right-1 w-2.5 h-2.5 bg-accent rounded-full border border-white text-[6px] flex items-center justify-center font-bold text-white"
-                                >
-                                    2
-                                </motion.span>
-                            </Button>
+                            <Link to="/cart">
+                                <Button variant="ghost" size="icon" className={cn("size-8 rounded-full relative", isScrolled ? "text-primary" : "text-white")}>
+                                    <ShoppingBag size={16} />
+                                    {totalItems > 0 && (
+                                        <motion.span
+                                            initial={{ scale: 0 }}
+                                            animate={{ scale: 1 }}
+                                            className="absolute top-1 right-1 w-3.5 h-3.5 bg-accent rounded-full border border-white text-[7px] flex items-center justify-center font-bold text-white shadow-sm"
+                                        >
+                                            {totalItems}
+                                        </motion.span>
+                                    )}
+                                </Button>
+                            </Link>
                         </div>
 
                         <Button

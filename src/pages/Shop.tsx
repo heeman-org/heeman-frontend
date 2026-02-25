@@ -1,22 +1,33 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Search, SlidersHorizontal, ArrowRight, Star, ShoppingBag, Heart } from "lucide-react";
+import { Search, SlidersHorizontal, ArrowRight, Star, ShoppingBag, Heart, CheckCircle2 } from "lucide-react";
 import { Button } from "../components/ui/Button";
 import { products } from "../data/products";
 import { cn } from "../lib/utils";
+import { useCart } from "../context/CartContext";
 
 const categories = ["All", ...new Set(products.map(p => p.category))];
 
 export default function Shop() {
     const [activeCategory, setActiveCategory] = useState("All");
     const [searchQuery, setSearchQuery] = useState("");
+    const [lastAdded, setLastAdded] = useState<string | null>(null);
+    const { addToCart } = useCart();
 
     const filteredProducts = products.filter(p => {
         const matchesCategory = activeCategory === "All" || p.category === activeCategory;
         const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase());
         return matchesCategory && matchesSearch;
     });
+
+    const handleQuickAdd = (p: typeof products[0], e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        addToCart(p, 1);
+        setLastAdded(p.name);
+        setTimeout(() => setLastAdded(null), 3000);
+    };
 
     return (
         <div className="pt-32 pb-24 min-h-screen">
@@ -106,10 +117,20 @@ export default function Shop() {
 
                                     {/* Actions Overlay */}
                                     <div className="absolute top-6 right-6 flex flex-col gap-3 translate-x-12 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-500">
-                                        <Button variant="ghost" size="icon" className="bg-white/95 backdrop-blur-md rounded-full size-10 shadow-sm border border-black/5 hover:bg-accent hover:text-white transition-all">
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            className="bg-white/95 backdrop-blur-md rounded-full size-10 shadow-sm border border-black/5 hover:bg-accent hover:text-white transition-all"
+                                            onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
+                                        >
                                             <Heart size={16} />
                                         </Button>
-                                        <Button variant="ghost" size="icon" className="bg-white/95 backdrop-blur-md rounded-full size-10 shadow-sm border border-black/5 hover:bg-accent hover:text-white transition-all">
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={(e) => handleQuickAdd(p, e)}
+                                            className="bg-white/95 backdrop-blur-md rounded-full size-10 shadow-sm border border-black/5 hover:bg-accent hover:text-white transition-all"
+                                        >
                                             <ShoppingBag size={16} />
                                         </Button>
                                     </div>
@@ -152,6 +173,21 @@ export default function Shop() {
                     </div>
                 )}
             </div>
+
+            {/* Notification */}
+            <AnimatePresence>
+                {lastAdded && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 50, x: "-50%" }}
+                        animate={{ opacity: 1, y: 0, x: "-50%" }}
+                        exit={{ opacity: 0, y: 20, x: "-50%" }}
+                        className="fixed bottom-12 left-1/2 z-[100] bg-primary text-white px-8 py-4 shadow-2xl flex items-center gap-4 border border-accent/20"
+                    >
+                        <CheckCircle2 className="text-accent" size={18} />
+                        <p className="text-xs font-bold uppercase tracking-widest">Added <span className="text-accent italic">{lastAdded}</span> to collection</p>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 }
