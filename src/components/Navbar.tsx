@@ -3,7 +3,7 @@ import { ShoppingBag, Search, Menu, X, User } from "lucide-react";
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
 import { Button } from "./ui/Button";
 import { cn } from "../lib/utils";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import logo from "../assets/logo.png";
 
@@ -12,6 +12,10 @@ export const Navbar = () => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const { scrollY } = useScroll();
     const { totalItems } = useCart();
+    const location = useLocation();
+
+    const isHomePage = location.pathname === "/";
+    const isDarkTheme = isScrolled || !isHomePage;
 
     useMotionValueEvent(scrollY, "change", (latest) => {
         setIsScrolled(latest > 50);
@@ -36,7 +40,7 @@ export const Navbar = () => {
                 transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
                 className={cn(
                     "fixed top-0 left-0 right-0 z-50 transition-colors duration-500 w-full",
-                    isScrolled ? "glass border-b" : "bg-transparent"
+                    isDarkTheme ? "glass border-b" : "bg-transparent"
                 )}
             >
                 <div className="container mx-auto px-6 lg:px-12 flex items-center justify-between">
@@ -51,7 +55,7 @@ export const Navbar = () => {
                                 alt="HEEMAN"
                                 className={cn(
                                     "h-14 md:h-18 w-auto transition-all duration-300",
-                                    !isScrolled && "brightness-0 invert"
+                                    !isDarkTheme && "brightness-0 invert"
                                 )}
                             />
                         </Link>
@@ -65,7 +69,7 @@ export const Navbar = () => {
                                 to={link.href}
                                 className={cn(
                                     "relative text-[11px] font-bold uppercase tracking-[0.2em] transition-colors duration-300 group overflow-hidden",
-                                    isScrolled ? "text-primary/70 hover:text-primary" : "text-white/70 hover:text-white"
+                                    isDarkTheme ? "text-primary/70 hover:text-primary" : "text-white/70 hover:text-white"
                                 )}
                             >
                                 {link.name}
@@ -78,18 +82,18 @@ export const Navbar = () => {
                     <div className="flex items-center gap-3">
                         <div className={cn(
                             "flex items-center gap-1 px-2 py-1 rounded-full border transition-all duration-300",
-                            isScrolled ? "border-primary/10 bg-black/5" : "border-white/10 bg-white/5"
+                            isDarkTheme ? "border-primary/10 bg-black/5" : "border-white/10 bg-white/5"
                         )}>
-                            <Button variant="ghost" size="icon" className={cn("size-8 rounded-full", isScrolled ? "text-primary" : "text-white")}>
+                            <Button variant="ghost" size="icon" className={cn("size-8 rounded-full", isDarkTheme ? "text-primary" : "text-white")}>
                                 <Search size={16} />
                             </Button>
                             <div className={cn("w-[1px] h-4 bg-current opacity-10")} />
-                            <Button variant="ghost" size="icon" className={cn("size-8 rounded-full", isScrolled ? "text-primary" : "text-white")}>
+                            <Button variant="ghost" size="icon" className={cn("size-8 rounded-full", isDarkTheme ? "text-primary" : "text-white")}>
                                 <User size={16} />
                             </Button>
                             <div className={cn("w-[1px] h-4 bg-current opacity-10")} />
                             <Link to="/cart">
-                                <Button variant="ghost" size="icon" className={cn("size-8 rounded-full relative", isScrolled ? "text-primary" : "text-white")}>
+                                <Button variant="ghost" size="icon" className={cn("size-8 rounded-full relative", isDarkTheme ? "text-primary" : "text-white")}>
                                     <ShoppingBag size={16} />
                                     {totalItems > 0 && (
                                         <motion.span
@@ -107,7 +111,7 @@ export const Navbar = () => {
                         <Button
                             variant="ghost"
                             size="icon"
-                            className={cn("lg:hidden rounded-full", isScrolled ? "text-primary" : "text-white")}
+                            className={cn("lg:hidden rounded-full", isDarkTheme ? "text-primary" : "text-white")}
                             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                         >
                             {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
@@ -117,7 +121,7 @@ export const Navbar = () => {
                             <Button
                                 className={cn(
                                     "hidden md:flex ml-2 rounded-none px-6 font-bold tracking-widest text-[10px] uppercase transition-all duration-300",
-                                    isScrolled
+                                    isDarkTheme
                                         ? "bg-primary text-white hover:bg-accent"
                                         : "bg-white text-primary hover:bg-accent hover:text-white"
                                 )}
@@ -167,8 +171,8 @@ export const Navbar = () => {
                         </div>
 
                         <div className="p-12 border-t">
-                            <Link to="/contact" onClick={() => setIsMobileMenuOpen(false)}>
-                                <Button className="w-full h-16 rounded-none text-lg">Inquire Now</Button>
+                            <Link to="/catalog.pdf" target="_blank" rel="noopener noreferrer" onClick={() => setIsMobileMenuOpen(false)}>
+                                <Button className="w-full h-16 rounded-none text-lg">Download Catalog</Button>
                             </Link>
                         </div>
                     </motion.div>
