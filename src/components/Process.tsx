@@ -1,27 +1,5 @@
 import { motion } from "framer-motion";
-
-const steps = [
-    {
-        num: "01",
-        title: "Conceptualization",
-        desc: "Our designers sketch visions that balance current trends with timeless silhouettes."
-    },
-    {
-        num: "02",
-        title: "Material Sourcing",
-        desc: "We select only the finest FSC-certified woods and premium sustainable fabrics."
-    },
-    {
-        num: "03",
-        title: "Hand-Craftsmanship",
-        desc: "Master artisans bring the designs to life with obsessive attention to every joint and finish."
-    },
-    {
-        num: "04",
-        title: "Quality Curation",
-        desc: "Every item undergoes a rigorous 48-point check before it's ready for your home."
-    }
-];
+import { landingConstants } from "../constants";
 
 export const Process = () => {
     return (
@@ -29,16 +7,16 @@ export const Process = () => {
             <div className="container mx-auto px-6">
                 <div className="flex flex-col md:flex-row justify-between items-end mb-20 gap-8">
                     <div className="max-w-xl">
-                        <h2 className="text-accent font-medium tracking-[0.3em] uppercase text-xs mb-6">How It's Made</h2>
-                        <h2 className="text-4xl md:text-5xl font-display leading-tight italic">The Heeman Standard Of Excellence</h2>
+                        <h2 className="text-accent font-medium tracking-[0.3em] uppercase text-xs mb-6">{landingConstants.process.subtitle}</h2>
+                        <h2 className="text-4xl md:text-5xl font-display leading-tight italic">{landingConstants.process.title}</h2>
                     </div>
                     <p className="max-w-xs text-white/50 text-sm leading-relaxed mb-2">
-                        Transparency is key to our philosophy. Discover the journey of your furniture from forest to living room.
+                        {landingConstants.process.description}
                     </p>
                 </div>
 
                 <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-12">
-                    {steps.map((step, i) => (
+                    {landingConstants.process.steps.map((step, i) => (
                         <motion.div
                             key={i}
                             initial={{ opacity: 0, y: 30 }}

@@ -1,28 +1,22 @@
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
-
-const cats = [
-    { title: "Living Room", img: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&q=80&w=800", count: 124 },
-    { title: "Bedroom", img: "https://images.unsplash.com/photo-1505693419163-d7bb94ae58c2?auto=format&fit=crop&q=80&w=800", count: 86 },
-    { title: "Workplace", img: "https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?auto=format&fit=crop&q=80&w=800", count: 42 },
-    { title: "Dining", img: "https://images.unsplash.com/photo-1577146313131-408992b23a7c?auto=format&fit=crop&q=80&w=800", count: 65 }
-];
+import { landingConstants } from "../constants";
 
 export const Categories = () => {
     return (
         <section className="py-24 container mx-auto px-6" id="collections">
             <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
                 <div className="max-w-xl">
-                    <h2 className="text-accent font-medium tracking-[0.3em] uppercase text-xs mb-6 block">Categories</h2>
-                    <h2 className="text-4xl md:text-5xl font-display leading-tight">Tailored For Every <br /><span className="italic serif">Atmosphere.</span></h2>
+                    <h2 className="text-accent font-medium tracking-[0.3em] uppercase text-xs mb-6 block">{landingConstants.categories.subtitle}</h2>
+                    <h2 className="text-4xl md:text-5xl font-display leading-tight">{landingConstants.categories.titleLine1} <br /><span className="italic serif">{landingConstants.categories.titleLine2}</span></h2>
                 </div>
                 <a href="#" className="flex items-center gap-4 group font-medium pb-2 border-b border-foreground/10 hover:border-accent transition-colors">
-                    Browse All <ArrowRight className="group-hover:translate-x-1 transition-transform" size={20} />
+                    {landingConstants.categories.browseText} <ArrowRight className="group-hover:translate-x-1 transition-transform" size={20} />
                 </a>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {cats.map((cat, i) => (
+                {landingConstants.categories.items.map((cat, i) => (
                     <motion.div
                         key={i}
                         whileHover={{ scale: 0.98 }}

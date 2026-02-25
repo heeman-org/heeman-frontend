@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { Button } from "./ui/Button";
+import { landingConstants } from "../constants";
 
 export const AboutUs = () => {
     return (
@@ -14,18 +15,18 @@ export const AboutUs = () => {
                             viewport={{ once: true }}
                             className="mt-12"
                         >
-                            <img src="https://images.unsplash.com/photo-1594026112284-02bb6f3352fe?auto=format&fit=crop&q=80&w=600" alt="Process" className="w-full aspect-[3/4] object-cover" />
+                            <img src={landingConstants.aboutUs.images.process} alt="Process" className="w-full aspect-[3/4] object-cover" />
                         </motion.div>
                         <motion.div
                             initial={{ opacity: 0, y: -40 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                         >
-                            <img src="https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?auto=format&fit=crop&q=80&w=600" alt="Detail" className="w-full aspect-[3/4] object-cover" />
+                            <img src={landingConstants.aboutUs.images.detail} alt="Detail" className="w-full aspect-[3/4] object-cover" />
                         </motion.div>
                     </div>
                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-accent flex items-center justify-center rounded-full text-white font-display text-center p-4">
-                        Established <br /> 1995
+                        {landingConstants.aboutUs.badgeLines[0]} <br /> {landingConstants.aboutUs.badgeLines[1]}
                     </div>
                 </div>
 
@@ -35,18 +36,15 @@ export const AboutUs = () => {
                     viewport={{ once: true }}
                     transition={{ duration: 0.8 }}
                 >
-                    <h2 className="text-accent font-medium tracking-[0.3em] uppercase text-xs mb-6">Our Legacy</h2>
-                    <h2 className="text-4xl md:text-5xl font-display mb-8 leading-tight">Crafting Environments <br /><span className="italic">That Inspire Comfort.</span></h2>
+                    <h2 className="text-accent font-medium tracking-[0.3em] uppercase text-xs mb-6">{landingConstants.aboutUs.subtitle}</h2>
+                    <h2 className="text-4xl md:text-5xl font-display mb-8 leading-tight">{landingConstants.aboutUs.titleLine1} <br /><span className="italic">{landingConstants.aboutUs.titleLine2}</span></h2>
                     <div className="space-y-6 text-foreground/70 leading-relaxed mb-10">
-                        <p>
-                            Started in a small workshop in Bangalore, Heeman has grown into a beacon of modern design and artisanal quality. We believe your furniture should be an extension of your personality.
-                        </p>
-                        <p>
-                            Our process is rooted in sustainability and traditional joinery techniques, ensuring that every piece is not just beautiful, but built to last generations.
-                        </p>
+                        {landingConstants.aboutUs.paragraphs.map((p, i) => (
+                            <p key={i}>{p}</p>
+                        ))}
                     </div>
                     <Button variant="outline" className="group">
-                        Read Our Full Story <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" size={18} />
+                        {landingConstants.aboutUs.buttonText} <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" size={18} />
                     </Button>
                 </motion.div>
             </div>

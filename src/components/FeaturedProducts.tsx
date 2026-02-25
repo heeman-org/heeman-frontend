@@ -1,52 +1,22 @@
 import { motion } from "framer-motion";
 import { Heart, ShoppingBag, Star } from "lucide-react";
 import { Button } from "./ui/Button";
-
-const products = [
-    {
-        name: "Velvet Lounge Sofa",
-        price: "$2,499",
-        tag: "Best Seller",
-        img: "https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?auto=format&fit=crop&q=80&w=800",
-        rating: 4.9
-    },
-    {
-        name: "Nordic Oak Dining",
-        price: "$1,850",
-        tag: "New Arrival",
-        img: "https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?auto=format&fit=crop&q=80&w=800",
-        rating: 4.8
-    },
-    {
-        name: "Minimalist Pendant",
-        price: "$420",
-        tag: "Luxury",
-        img: "https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&q=80&w=800",
-        rating: 4.7
-    },
-    {
-        name: "Walnut Coffee Table",
-        price: "$890",
-        tag: "Artisan",
-        img: "https://images.unsplash.com/photo-1533090161767-e6ffed986c88?auto=format&fit=crop&q=80&w=800",
-        rating: 4.9
-    }
-];
+import { landingConstants } from "../constants";
 
 export const FeaturedProducts = () => {
     return (
         <section className="py-24" id="new-arrivals">
             <div className="container mx-auto px-6">
                 <div className="text-center mb-20 max-w-2xl mx-auto">
-                    <h2 className="text-accent font-medium tracking-[0.3em] uppercase text-xs mb-6">Trending</h2>
-                    <h2 className="text-4xl md:text-5xl font-display mb-6">The Curator's Selection</h2>
+                    <h2 className="text-accent font-medium tracking-[0.3em] uppercase text-xs mb-6">{landingConstants.featuredProducts.subtitle}</h2>
+                    <h2 className="text-4xl md:text-5xl font-display mb-6">{landingConstants.featuredProducts.title}</h2>
                     <p className="text-foreground/50 text-sm leading-relaxed">
-                        Discover our most sought-after pieces, handpicked for their unique design and exceptional material quality.
+                        {landingConstants.featuredProducts.description}
                     </p>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                    {products.map((p, i) => (
+                    {landingConstants.featuredProducts.products.map((p, i) => (
                         <motion.div
                             key={i}
                             initial={{ opacity: 0, y: 20 }}
@@ -91,7 +61,7 @@ export const FeaturedProducts = () => {
 
                 <div className="mt-20 text-center">
                     <Button variant="outline" size="lg" className="px-16 border-foreground/10 hover:border-accent">
-                        View All Series
+                        {landingConstants.featuredProducts.viewAllButton}
                     </Button>
                 </div>
             </div>
