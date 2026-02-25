@@ -5,6 +5,7 @@ import { Button } from "./ui/Button";
 import { cn } from "../lib/utils";
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import logo from "../assets/logo.png";
 
 export const Navbar = () => {
     const [isScrolled, setIsScrolled] = useState(false);
@@ -44,11 +45,15 @@ export const Navbar = () => {
                         whileHover={{ scale: 1.05 }}
                         className="flex-shrink-0"
                     >
-                        <Link to="/" className={cn(
-                            "text-2xl font-display font-bold tracking-[-0.04em] transition-colors duration-300",
-                            isScrolled ? "text-primary" : "text-white"
-                        )}>
-                            HEEMAN<span className="text-accent">.</span>
+                        <Link to="/" className="block">
+                            <img
+                                src={logo}
+                                alt="HEEMAN"
+                                className={cn(
+                                    "h-14 md:h-18 w-auto transition-all duration-300",
+                                    !isScrolled && "brightness-0 invert"
+                                )}
+                            />
                         </Link>
                     </motion.div>
 
@@ -108,7 +113,7 @@ export const Navbar = () => {
                             {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
                         </Button>
 
-                        <Link to="/contact">
+                        <a href="/catalog.pdf" target="_blank" rel="noopener noreferrer">
                             <Button
                                 className={cn(
                                     "hidden md:flex ml-2 rounded-none px-6 font-bold tracking-widest text-[10px] uppercase transition-all duration-300",
@@ -117,9 +122,9 @@ export const Navbar = () => {
                                         : "bg-white text-primary hover:bg-accent hover:text-white"
                                 )}
                             >
-                                Contact Us
+                                Catalogue
                             </Button>
-                        </Link>
+                        </a>
                     </div>
                 </div>
             </motion.nav>
