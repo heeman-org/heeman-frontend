@@ -170,7 +170,7 @@ export default function Shop() {
 
                                     {/* Badge */}
                                     <div className="absolute top-6 left-6 pointer-events-none">
-                                        <span className="bg-white/95 backdrop-blur-md px-4 py-1.5 text-[9px] font-bold uppercase tracking-[0.2em] text-primary shadow-sm border border-black/5">
+                                        <span className="bg-white/95 backdrop-blur-md px-4 py-1.5 text-[12px] font-bold uppercase tracking-[0.2em] text-primary shadow-sm border border-black/5">
                                             {p.tag}
                                         </span>
                                     </div>
@@ -216,10 +216,10 @@ export default function Shop() {
 
                                 <div className="flex flex-col">
                                     <div className="flex justify-between items-start mb-2">
-                                        <span className="text-[10px] uppercase tracking-[0.2em] text-foreground/30 font-bold">{p.category}</span>
+                                        <span className="text-[11px] uppercase tracking-[0.2em] text-foreground/30 font-bold">{p.category}</span>
                                         <div className="flex items-center gap-1">
                                             <Star size={10} className="fill-accent text-accent" />
-                                            <span className="text-[10px] font-bold">{p.rating}</span>
+                                            <span className="text-[11px] font-bold">{p.rating}</span>
                                         </div>
                                     </div>
 
@@ -229,7 +229,7 @@ export default function Shop() {
 
                                     <div className="flex justify-between items-end">
                                         <span className="text-xl font-display italic text-accent">{p.price}</span>
-                                        <Link to={`/shop/${p.id}`} className="group/link flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-foreground/40 hover:text-primary transition-colors">
+                                        <Link to={`/shop/${p.id}`} className="group/link flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-foreground/40 hover:text-primary transition-colors">
                                             Explore Details <ArrowRight size={14} className="group-hover/link:translate-x-1 transition-transform" />
                                         </Link>
                                     </div>

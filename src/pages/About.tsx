@@ -12,7 +12,7 @@ export default function About() {
                     <motion.span
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="text-accent font-bold tracking-[0.3em] uppercase text-xs mb-8 block"
+                        className="text-accent font-bold tracking-[0.3em] uppercase text-md mb-8 block"
                     >
                         {aboutConstants.hero.subtitle}
                     </motion.span>
@@ -78,7 +78,7 @@ export default function About() {
                 <div className="container mx-auto px-6">
                     <div className="grid lg:grid-cols-3 gap-16">
                         <div>
-                            <h2 className="text-accent font-bold tracking-[0.2em] uppercase text-xs mb-6">{aboutConstants.philosophy.subtitle}</h2>
+                            <h2 className="text-accent font-bold tracking-[0.2em] uppercase text-md mb-6">{aboutConstants.philosophy.subtitle}</h2>
                             <h3 className="text-4xl font-display leading-tight">{aboutConstants.philosophy.title}</h3>
                         </div>
                         <div className="lg:col-span-2 grid md:grid-cols-2 gap-12">
@@ -88,7 +88,7 @@ export default function About() {
                                     <div key={i} className="space-y-4">
                                         <Icon className="text-accent" size={32} />
                                         <h4 className="text-xl font-bold">{item.title}</h4>
-                                        <p className="text-foreground/60 text-sm leading-relaxed">
+                                        <p className="text-foreground/80 text-sm leading-relaxed">
                                             {item.description}
                                         </p>
                                     </div>
@@ -105,7 +105,7 @@ export default function About() {
                     {aboutConstants.stats.map((stat, i) => (
                         <div key={i} className="text-center">
                             <h4 className="text-5xl font-display mb-2">{stat.value}</h4>
-                            <p className="text-[10px] uppercase tracking-[0.3em] font-bold text-foreground/40">{stat.label}</p>
+                            <p className="text-[10px] uppercase tracking-[0.3em] font-bold text-foreground/60">{stat.label}</p>
                         </div>
                     ))}
                 </div>
@@ -116,7 +116,7 @@ export default function About() {
                 <div className="bg-primary text-white p-16 md:p-32 text-center relative overflow-hidden">
                     <div className="relative z-10">
                         <h2 className="text-4xl md:text-5xl font-display mb-8">{aboutConstants.cta.title}</h2>
-                        <p className="text-white/60 mb-12 max-w-xl mx-auto">
+                        <p className="text-white/80 mb-12 max-w-xl mx-auto">
                             {aboutConstants.cta.description}
                         </p>
                         <div className="flex justify-center gap-6">

@@ -7,7 +7,7 @@ export const aboutConstants = {
     },
     imageSpread: {
         image1: "https://images.unsplash.com/photo-1540518614846-7eded433c457?auto=format&fit=crop&q=80&w=1200",
-        image2: "https://images.unsplash.com/photo-1565418187622-446755498877?auto=format&fit=crop&q=80&w=1200",
+        image2: "https://images.unsplash.com/photo-1540518614846-7eded433c457?auto=format&fit=crop&q=80&w=1200",
         title: "Honest Materials.",
         description: "Every grain of wood and thread of fabric is selected for its longevity and ethical provenance. We don't just build furniture; we preserve ecology."
     },
