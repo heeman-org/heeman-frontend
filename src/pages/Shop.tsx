@@ -113,7 +113,7 @@ export default function Shop() {
                             <Link to={`/shop/${p.id}`} className="block">
                                 <div className="relative aspect-[4/5] overflow-hidden bg-secondary mb-6 group-hover:shadow-[0_30px_60px_rgba(0,0,0,0.12)] transition-all duration-700">
                                     <img
-                                        src={p.image}
+                                        src={p.img}
                                         alt={p.name}
                                         className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
                                     />

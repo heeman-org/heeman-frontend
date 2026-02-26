@@ -25,7 +25,7 @@ export default function ProductDetail() {
 
     useEffect(() => {
         if (product) {
-            setActiveImage(product.gallery[0] || product.image);
+            setActiveImage(product.gallery[0] || product.img);
         }
     }, [product]);
 
@@ -320,7 +320,7 @@ export default function ProductDetail() {
                             {recommendations.map((p: Product) => (
                                 <Link key={p.id} to={`/shop/${p.id}`} className="group">
                                     <div className="aspect-[4/5] overflow-hidden bg-secondary mb-6 group-hover:shadow-2xl transition-all duration-700">
-                                        <img src={p.image} alt={p.name} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
+                                        <img src={p.img} alt={p.name} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
                                     </div>
                                     <h4 className="text-2xl font-display mb-2">{p.name}</h4>
                                     <p className="text-accent italic font-display">{p.price}</p>

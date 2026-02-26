@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import { type Product } from "../data/products";
+import { ENV } from "../config/env.config";
 
 export function useProducts() {
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch("http://localhost:8000/api/products")
+        fetch(`${ENV.API_BASE_URL}/api/products`)
             .then(res => res.json())
             .then(data => {
                 const mappedProducts: Product[] = data.map((item: any) => ({
@@ -15,7 +16,7 @@ export function useProducts() {
                     price: `$${item.price.toLocaleString()}`,
                     category: item.tags?.[0] || item.series || "General",
                     tag: item.tags?.[1] || "New",
-                    image: item.images?.[0]?.url || "https://images.unsplash.com/photo-1540518614846-7eded433c457?auto=format&fit=crop&q=80&w=1200",
+                    img: item.images?.[0]?.url || "https://images.unsplash.com/photo-1540518614846-7eded433c457?auto=format&fit=crop&q=80&w=1200",
                     gallery: item.images?.map((img: any) => img.url) || [],
                     rating: 4.8, // Mocked rating
                     reviewCount: 42, // Mocked 

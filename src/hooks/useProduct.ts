@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { type Product } from "../data/products";
+import { ENV } from "../config/env.config";
 
 export function useProduct(id: string | undefined) {
     const [product, setProduct] = useState<Product | null>(null);
@@ -10,7 +11,7 @@ export function useProduct(id: string | undefined) {
         if (!id) return;
         setLoading(true);
         try {
-            const response = await fetch(`http://localhost:8000/api/products/${id}`);
+            const response = await fetch(`${ENV.API_BASE_URL}/api/products/${id}`);
             if (!response.ok) throw new Error("Product not found");
             const item = await response.json();
 
@@ -20,7 +21,7 @@ export function useProduct(id: string | undefined) {
                 price: `$${item.price.toLocaleString()}`,
                 category: item.tags?.[0] || item.series || "General",
                 tag: item.tags?.[1] || "New",
-                image: item.images?.[0]?.url || "https://images.unsplash.com/photo-1540518614846-7eded433c457?auto=format&fit=crop&q=80&w=1200",
+                img: item.images?.[0]?.url || "https://images.unsplash.com/photo-1540518614846-7eded433c457?auto=format&fit=crop&q=80&w=1200",
                 gallery: item.images?.map((img: any) => img.url) || [],
                 rating: 4.8, // Mocked rating
                 reviewCount: 42, // Mocked 
