@@ -1,14 +1,64 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Trash2, Minus, Plus, ArrowRight, ShoppingBag, ShieldCheck, Truck } from "lucide-react";
+import { Trash2, Minus, Plus, ArrowRight, ShoppingBag, ShieldCheck, Truck, Tag, X, Loader2 } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import { Button } from "../components/ui/Button";
+import { authClient } from "../lib/auth-client";
+import { useState } from "react";
+import { ENV } from "../config/env.config";
+
+interface AppliedCoupon {
+    code: string;
+    discountType: "PERCENTAGE" | "FIXED";
+    discountValue: number;
+    productIds: string[];
+}
 
 export default function Cart() {
     const { cart, removeFromCart, updateQuantity, subtotal, totalItems } = useCart();
+
+    // Auth state for user specific validation
+    const { data: session } = authClient.useSession();
+    const currentUserId = session?.user?.id;
+
+    // Coupon state
+    const [couponCode, setCouponCode] = useState("");
+    const [appliedCoupon, setAppliedCoupon] = useState<AppliedCoupon | null>(null);
+    const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
+    const [couponError, setCouponError] = useState("");
+    const [couponSuccess, setCouponSuccess] = useState(false);
+
+    // Initial calculations
     const shipping = subtotal > 5000 ? 0 : 150;
-    const tax = subtotal * 0.18;
-    const total = subtotal + shipping + tax;
+
+    // Calculate eligible amount for discount
+    const eligibleAmount = appliedCoupon
+        ? appliedCoupon.productIds.length > 0
+            ? cart.reduce((sum, item) => {
+                if (appliedCoupon.productIds.includes(item.id)) {
+                    const price = parseFloat(item.price.replace(/[$,]/g, ""));
+                    return sum + (price * item.quantity);
+                }
+                return sum;
+            }, 0)
+            : subtotal
+        : 0;
+
+    // Calculate discount amount
+    let discountAmount = 0;
+    if (appliedCoupon) {
+        if (eligibleAmount > 0) {
+            if (appliedCoupon.discountType === "PERCENTAGE") {
+                discountAmount = eligibleAmount * (appliedCoupon.discountValue / 100);
+            } else {
+                discountAmount = Math.min(appliedCoupon.discountValue, eligibleAmount);
+            }
+        }
+    }
+
+    const subtotalAfterDiscount = Math.max(0, subtotal - discountAmount);
+    const tax = subtotalAfterDiscount * 0.18;
+    const total = subtotalAfterDiscount + shipping + tax;
 
     const formatPrice = (amount: number) => {
         return new Intl.NumberFormat("en-US", {
@@ -16,6 +66,77 @@ export default function Cart() {
             currency: "USD",
         }).format(amount);
     };
+
+    const handleApplyCoupon = async () => {
+        setCouponError("");
+        setCouponSuccess(false);
+
+        if (!couponCode.trim()) {
+            setCouponError("Please enter a coupon code");
+            return;
+        }
+
+        setIsApplyingCoupon(true);
+        try {
+            const url = new URL(`${ENV.API_BASE_URL}/api/coupons/code/${couponCode.toUpperCase()}`);
+            if (currentUserId) {
+                url.searchParams.append("userId", currentUserId);
+            }
+            const response = await fetch(url.toString());
+
+            if (!response.ok) {
+                if (response.status === 403) {
+                    throw new Error("This coupon is restricted to a different user account");
+                }
+                throw new Error("Invalid or expired coupon");
+            }
+            const data = await response.json();
+
+            // Check if coupon is active
+            if (!data.isActive) {
+                throw new Error("This coupon is no longer active");
+            }
+
+            // Check valid dates
+            const now = new Date();
+            if (new Date(data.validFrom) > now) {
+                throw new Error("This coupon is not valid yet");
+            }
+            if (data.validUntil && new Date(data.validUntil) < now) {
+                throw new Error("This coupon has expired");
+            }
+
+            // Check usage limit
+            if (data.usageLimit !== null && data.usedCount >= data.usageLimit) {
+                throw new Error("This coupon usage limit has been reached");
+            }
+
+            // Save applied coupon with relevant details
+            setAppliedCoupon({
+                code: data.code,
+                discountType: data.discountType,
+                discountValue: data.discountValue,
+                productIds: data.products.map((p: any) => p.id),
+            });
+            setCouponSuccess(true);
+            setCouponCode("");
+
+        } catch (err: any) {
+            setCouponError(err.message || "Failed to apply coupon");
+            setAppliedCoupon(null);
+        } finally {
+            setIsApplyingCoupon(false);
+        }
+    };
+
+    const removeCoupon = () => {
+        setAppliedCoupon(null);
+        setCouponCode("");
+        setCouponError("");
+        setCouponSuccess(false);
+    };
+
+    // Removed subtotal drop check since minOrderAmount has been eliminated
 
     return (
         <div className="pt-32 pb-24 min-h-[80vh]">
@@ -73,7 +194,7 @@ export default function Cart() {
                                     >
                                         <Link to={`/shop/${item.id}`} className="shrink-0 aspect-[4/5] w-full sm:w-40 overflow-hidden bg-secondary">
                                             <img
-                                                src={item.image}
+                                                src={item.img}
                                                 alt={item.name}
                                                 className="w-full h-full object-cover grayscale-0 group-hover:scale-110 transition-transform duration-700"
                                             />
@@ -124,6 +245,70 @@ export default function Cart() {
                                     </motion.div>
                                 ))}
                             </AnimatePresence>
+
+                            {/* Coupon Section */}
+                            <motion.div
+                                layout
+                                className="bg-secondary/10 border border-foreground/5 p-8"
+                            >
+                                <div className="flex items-center gap-3 mb-6">
+                                    <Tag className="text-accent" size={20} />
+                                    <h3 className="text-xl font-display">Apply Discount Code</h3>
+                                </div>
+
+                                {appliedCoupon ? (
+                                    <div className="flex items-center justify-between bg-green-50 text-green-800 p-4 border border-green-200">
+                                        <div className="flex flex-col">
+                                            <span className="text-sm font-bold uppercase tracking-widest">
+                                                Code Applied: {appliedCoupon.code}
+                                            </span>
+                                            <span className="text-xs mt-1">
+                                                {appliedCoupon.discountType === "PERCENTAGE"
+                                                    ? `${appliedCoupon.discountValue}% off`
+                                                    : formatPrice(appliedCoupon.discountValue) + ` off`}
+                                                {appliedCoupon.productIds.length > 0 ? " on selected items" : " on your order"}
+                                                {discountAmount === 0 && " (Requirements not met)"}
+                                            </span>
+                                        </div>
+                                        <button
+                                            onClick={removeCoupon}
+                                            className="p-2 hover:bg-green-100 transition-colors"
+                                            aria-label="Remove coupon"
+                                        >
+                                            <X size={16} />
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <div>
+                                        <div className="flex gap-4">
+                                            <input
+                                                type="text"
+                                                placeholder="Enter your discount code here"
+                                                value={couponCode}
+                                                onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                                                className="flex-1 h-12 px-4 bg-white border border-foreground/10 focus:border-accent outline-none uppercase font-mono tracking-widest text-sm"
+                                            />
+                                            <Button
+                                                onClick={handleApplyCoupon}
+                                                disabled={isApplyingCoupon || !couponCode.trim()}
+                                                className="h-12 px-8 uppercase tracking-widest text-[10px] font-bold rounded-none whitespace-nowrap"
+                                            >
+                                                {isApplyingCoupon ? <Loader2 className="animate-spin" size={16} /> : "Apply"}
+                                            </Button>
+                                        </div>
+                                        {couponError && (
+                                            <p className="text-red-500 text-xs font-bold uppercase tracking-widest mt-4">
+                                                {couponError}
+                                            </p>
+                                        )}
+                                        {couponSuccess && (
+                                            <p className="text-green-600 text-xs font-bold uppercase tracking-widest mt-4">
+                                                Coupon applied successfully!
+                                            </p>
+                                        )}
+                                    </div>
+                                )}
+                            </motion.div>
                         </div>
 
                         {/* Summary */}
@@ -136,6 +321,14 @@ export default function Cart() {
                                         <span className="opacity-50">Subtotal</span>
                                         <span className="font-bold">{formatPrice(subtotal)}</span>
                                     </div>
+
+                                    {appliedCoupon && discountAmount > 0 && (
+                                        <div className="flex justify-between text-sm text-accent">
+                                            <span className="font-medium">Discount ({appliedCoupon.code})</span>
+                                            <span className="font-bold">-{formatPrice(discountAmount)}</span>
+                                        </div>
+                                    )}
+
                                     <div className="flex justify-between text-sm">
                                         <span className="opacity-50">White Glove Delivery</span>
                                         <span className="font-bold">{shipping === 0 ? "Complimentary" : formatPrice(shipping)}</span>
