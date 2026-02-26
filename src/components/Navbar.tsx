@@ -7,12 +7,18 @@ import { Link, useLocation } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import logo from "../assets/logo.png";
 
+import { authClient } from "../lib/auth-client";
+
 export const Navbar = () => {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
     const { scrollY } = useScroll();
     const { totalItems } = useCart();
     const location = useLocation();
+
+    const { data: session } = authClient.useSession();
+    const isAuthenticated = !!session;
 
     const isHomePage = location.pathname === "/";
     const isDarkTheme = isScrolled || !isHomePage;
@@ -27,6 +33,11 @@ export const Navbar = () => {
         { name: "Our Story", href: "/about" },
         { name: "Contact", href: "/contact" },
     ];
+
+    const handleLogout = async () => {
+        await authClient.signOut();
+        window.location.reload();
+    };
 
     return (
         <>
@@ -44,11 +55,8 @@ export const Navbar = () => {
                 )}
             >
                 <div className="container mx-auto px-6 lg:px-12 flex items-center justify-between">
-                    {/* Logo */}
-                    <motion.div
-                        whileHover={{ scale: 1.05 }}
-                        className="flex-shrink-0"
-                    >
+                    {/* ... (Logo and Center Links unchanged) ... */}
+                    <div className="flex-shrink-0">
                         <Link to="/" className="block">
                             <img
                                 src={logo}
@@ -59,9 +67,8 @@ export const Navbar = () => {
                                 )}
                             />
                         </Link>
-                    </motion.div>
+                    </div>
 
-                    {/* Center Links - Desktop */}
                     <div className="hidden lg:flex items-center gap-10">
                         {navLinks.map((link) => (
                             <Link
@@ -88,9 +95,52 @@ export const Navbar = () => {
                                 <Search size={16} />
                             </Button>
                             <div className={cn("w-[1px] h-4 bg-current opacity-10")} />
-                            <Button variant="ghost" size="icon" className={cn("size-8 rounded-full", isDarkTheme ? "text-primary" : "text-white")}>
-                                <User size={16} />
-                            </Button>
+
+                            {/* User Profile / Login Dropdown */}
+                            <div
+                                className="relative"
+                                onMouseEnter={() => setIsUserDropdownOpen(true)}
+                                onMouseLeave={() => setIsUserDropdownOpen(false)}
+                            >
+                                <Button variant="ghost" size="icon" className={cn("size-8 rounded-full", isDarkTheme ? "text-primary" : "text-white")}>
+                                    <User size={16} />
+                                </Button>
+
+                                <AnimatePresence>
+                                    {isUserDropdownOpen && (
+                                        <motion.div
+                                            initial={{ opacity: 0, y: 10 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            exit={{ opacity: 0, y: 10 }}
+                                            className="absolute right-0 top-full pt-4 w-48"
+                                        >
+                                            <div className="bg-white border shadow-xl p-2 flex flex-col gap-1">
+                                                {!isAuthenticated ? (
+                                                    <>
+                                                        <Link to="/login" className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest hover:bg-zinc-50 transition-colors">Login</Link>
+                                                        <Link to="/signup" className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest hover:bg-zinc-50 transition-colors">Sign Up</Link>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <div className="px-4 py-2 border-b mb-1">
+                                                            <p className="text-[10px] font-bold uppercase tracking-widest text-accent">Profile</p>
+                                                            <p className="text-[9px] text-primary/50 truncate italic font-medium">{session.user.email}</p>
+                                                        </div>
+                                                        <Link to="/orders" className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest hover:bg-zinc-50 transition-colors">My Orders</Link>
+                                                        <button
+                                                            onClick={handleLogout}
+                                                            className="text-left px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-red-500 hover:bg-zinc-50 transition-colors"
+                                                        >
+                                                            Logout
+                                                        </button>
+                                                    </>
+                                                )}
+                                            </div>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+                            </div>
+
                             <div className={cn("w-[1px] h-4 bg-current opacity-10")} />
                             <Link to="/cart">
                                 <Button variant="ghost" size="icon" className={cn("size-8 rounded-full relative", isDarkTheme ? "text-primary" : "text-white")}>
