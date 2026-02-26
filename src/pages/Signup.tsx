@@ -19,7 +19,7 @@ export default function Signup() {
 
     // Check for pending verification on mount
     useEffect(() => {
-        const pendingEmail = localStorage.getItem("heman_pending_verification");
+        const pendingEmail = localStorage.getItem("Heeman_pending_verification");
         if (pendingEmail) {
             setEmail(pendingEmail);
             setStep("otp");
@@ -50,14 +50,14 @@ export default function Signup() {
                     if (otpError) {
                         setError(error.message || "User already registered. Please login.");
                     } else {
-                        localStorage.setItem("heman_pending_verification", email);
+                        localStorage.setItem("Heeman_pending_verification", email);
                         setStep("otp");
                     }
                 } else {
                     setError(error.message || "Failed to create account");
                 }
             } else {
-                localStorage.setItem("heman_pending_verification", email);
+                localStorage.setItem("Heeman_pending_verification", email);
                 setStep("otp");
             }
         } catch (err: any) {
@@ -82,7 +82,7 @@ export default function Signup() {
                 setError(error.message || "Invalid or expired OTP.");
             } else {
                 // Success - clear pending state and proceed
-                localStorage.removeItem("heman_pending_verification");
+                localStorage.removeItem("Heeman_pending_verification");
                 navigate("/");
             }
         } catch (err: any) {
@@ -93,7 +93,7 @@ export default function Signup() {
     };
 
     const handleBackToDetails = () => {
-        localStorage.removeItem("heman_pending_verification");
+        localStorage.removeItem("Heeman_pending_verification");
         setStep("details");
     };
 
@@ -106,7 +106,7 @@ export default function Signup() {
             >
                 <div className="text-center mb-10">
                     <h1 className="text-4xl font-display font-bold tracking-tight mb-3">
-                        {step === "details" ? "Join HeMan" : "Verify Identity"}
+                        {step === "details" ? "Join Heeman" : "Verify Identity"}
                     </h1>
                     <p className="text-primary/60 text-sm italic">
                         {step === "details"

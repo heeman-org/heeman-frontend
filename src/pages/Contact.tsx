@@ -1,9 +1,93 @@
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import * as LucideIcons from "lucide-react";
 import { Button } from "../components/ui/Button";
 import { contactConstants } from "../constants";
+import { authClient } from "../lib/auth-client";
 
 export default function Contact() {
+    const { data: session, isPending } = authClient.useSession();
+    const navigate = useNavigate();
+
+    const [formData, setFormData] = useState({
+        name: "",
+        email: "",
+        subject: contactConstants.form.fields.subject.options[0],
+        message: ""
+    });
+    const [loading, setLoading] = useState(false);
+    const [success, setSuccess] = useState(false);
+    const [error, setError] = useState("");
+
+    // Populate user data once session is loaded
+    useEffect(() => {
+        if (session?.user) {
+            setFormData(prev => ({
+                ...prev,
+                name: session.user.name || "",
+                email: session.user.email || ""
+            }));
+        }
+    }, [session]);
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        // If user is not authenticated, redirect to login page with a message
+        if (!session?.user) {
+            setError("Authentication required to send messages. Redirecting to login...");
+            setTimeout(() => {
+                navigate("/login", { state: { message: "Please log in before submitting a support ticket." } });
+            }, 2500);
+            return;
+        }
+
+        if (!formData.name || !formData.email || !formData.message) {
+            setError("Please fill out all required fields.");
+            return;
+        }
+
+        setLoading(true);
+        setError("");
+        setSuccess(false);
+
+        try {
+            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/contact`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(formData)
+            });
+            const data = await response.json();
+
+            if (data.success) {
+                setSuccess(true);
+                setFormData({
+                    name: "",
+                    email: "",
+                    subject: contactConstants.form.fields.subject.options[0],
+                    message: ""
+                });
+            } else {
+                throw new Error(data.error || "Failed to send message.");
+            }
+        } catch (err: any) {
+            setError(err.message || "Failed to send message. Please try again later.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    if (isPending) {
+        return (
+            <div className="pt-32 pb-24 min-h-screen flex items-center justify-center">
+                <LucideIcons.Loader2 className="h-8 w-8 animate-spin text-accent" />
+            </div>
+        );
+    }
+
     return (
         <div className="pt-32 pb-24">
             {/* Header */}
@@ -42,33 +126,57 @@ export default function Contact() {
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="bg-secondary/30 p-12 lg:p-16 border border-foreground/5"
+                        className="bg-secondary/30 p-12 lg:p-16 border border-foreground/5 relative"
                     >
-                        <form className="space-y-8" onSubmit={(e) => e.preventDefault()}>
+                        <form className="space-y-8" onSubmit={handleSubmit}>
+                            {success && (
+                                <div className="bg-green-500/10 text-green-700 dark:text-green-400 p-4 font-medium text-sm border border-green-500/20">
+                                    Message sent successfully! We will get back to you shortly.
+                                </div>
+                            )}
+                            {error && (
+                                <div className="bg-red-500/10 text-red-700 dark:text-red-400 p-4 font-medium text-sm border border-red-500/20">
+                                    {error}
+                                </div>
+                            )}
+
                             <div className="grid md:grid-cols-2 gap-8">
                                 <div className="space-y-2">
                                     <label className="text-[10px] uppercase tracking-widest font-bold opacity-40">{contactConstants.form.fields.fullName.label}</label>
                                     <input
+                                        required
                                         type="text"
                                         placeholder={contactConstants.form.fields.fullName.placeholder}
-                                        className="w-full bg-transparent border-b border-foreground/10 py-3 outline-none focus:border-accent transition-colors"
+                                        value={formData.name}
+                                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                        readOnly={!!session?.user}
+                                        className={`w-full bg-transparent border-b border-foreground/10 py-3 outline-none focus:border-accent transition-colors disabled:opacity-50 ${session?.user ? 'opacity-70 cursor-not-allowed' : ''}`}
                                     />
                                 </div>
                                 <div className="space-y-2">
                                     <label className="text-[10px] uppercase tracking-widest font-bold opacity-40">{contactConstants.form.fields.email.label}</label>
                                     <input
+                                        required
                                         type="email"
                                         placeholder={contactConstants.form.fields.email.placeholder}
-                                        className="w-full bg-transparent border-b border-foreground/10 py-3 outline-none focus:border-accent transition-colors"
+                                        value={formData.email}
+                                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                        readOnly={!!session?.user}
+                                        className={`w-full bg-transparent border-b border-foreground/10 py-3 outline-none focus:border-accent transition-colors disabled:opacity-50 ${session?.user ? 'opacity-70 cursor-not-allowed' : ''}`}
                                     />
                                 </div>
                             </div>
 
                             <div className="space-y-2">
                                 <label className="text-[10px] uppercase tracking-widest font-bold opacity-40">{contactConstants.form.fields.subject.label}</label>
-                                <select className="w-full bg-transparent border-b border-foreground/10 py-3 outline-none focus:border-accent transition-colors appearance-none cursor-pointer">
+                                <select
+                                    value={formData.subject}
+                                    onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+                                    disabled={loading}
+                                    className="w-full bg-transparent border-b border-foreground/10 py-3 outline-none focus:border-accent transition-colors appearance-none cursor-pointer disabled:opacity-50"
+                                >
                                     {contactConstants.form.fields.subject.options.map((opt, i) => (
-                                        <option key={i}>{opt}</option>
+                                        <option key={i} value={opt}>{opt}</option>
                                     ))}
                                 </select>
                             </div>
@@ -76,14 +184,24 @@ export default function Contact() {
                             <div className="space-y-2">
                                 <label className="text-[10px] uppercase tracking-widest font-bold opacity-40">{contactConstants.form.fields.message.label}</label>
                                 <textarea
+                                    required
                                     rows={4}
                                     placeholder={contactConstants.form.fields.message.placeholder}
-                                    className="w-full bg-transparent border-b border-foreground/10 py-3 outline-none focus:border-accent transition-colors resize-none"
+                                    value={formData.message}
+                                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                                    disabled={loading}
+                                    className="w-full bg-transparent border-b border-foreground/10 py-3 outline-none focus:border-accent transition-colors resize-none disabled:opacity-50"
                                 />
                             </div>
 
-                            <Button size="lg" className="w-full h-16 rounded-none bg-primary text-white hover:bg-accent transition-all group">
-                                {contactConstants.form.buttonText} <LucideIcons.ArrowRight className="ml-2 group-hover:translate-x-2 transition-transform" />
+                            <Button
+                                type="submit"
+                                size="lg"
+                                disabled={loading}
+                                className="w-full h-16 rounded-none bg-primary text-white hover:bg-accent transition-all group disabled:opacity-50"
+                            >
+                                {loading ? "Sending..." : contactConstants.form.buttonText}
+                                {!loading && <LucideIcons.ArrowRight className="ml-2 group-hover:translate-x-2 transition-transform" />}
                             </Button>
                         </form>
                     </motion.div>

@@ -1,16 +1,17 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { authClient } from "../lib/auth-client";
 import { Button } from "../components/ui/Button";
 import { Mail, Lock, ArrowRight, Loader2 } from "lucide-react";
 
 export default function Login() {
+    const location = useLocation();
+    const navigate = useNavigate();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState("");
-    const navigate = useNavigate();
+    const [error, setError] = useState(location.state?.message || "");
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -27,7 +28,7 @@ export default function Login() {
                 // Handle unverified user error
                 if (error.message?.toLowerCase().includes("verify") || error.status === 403) {
                     setError("Email not verified. Redirecting to verification...");
-                    localStorage.setItem("heman_pending_verification", email);
+                    localStorage.setItem("Heeman_pending_verification", email);
 
                     // Trigger a fresh OTP for them
                     await authClient.emailOtp.sendVerificationOtp({
