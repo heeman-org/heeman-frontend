@@ -7,13 +7,16 @@ import {
     Plus, Minus, Check, CheckCircle2
 } from "lucide-react";
 import { Button } from "../components/ui/Button";
-import { products, type Product } from "../data/products";
+import { type Product } from "../data/products";
+import { useProduct } from "../hooks/useProduct";
+import { useProducts } from "../hooks/useProducts";
 import { cn } from "../lib/utils";
 import { useCart } from "../context/CartContext";
 
 export default function ProductDetail() {
     const { id } = useParams();
-    const [product, setProduct] = useState<Product | null>(null);
+    const { product, loading } = useProduct(id);
+    const { products: allProducts } = useProducts(); // For recommendations
     const [activeImage, setActiveImage] = useState("");
     const [quantity, setQuantity] = useState(1);
     const [activeTab, setActiveTab] = useState("description");
@@ -21,12 +24,10 @@ export default function ProductDetail() {
     const { addToCart } = useCart();
 
     useEffect(() => {
-        const found = products.find(p => p.id === id);
-        if (found) {
-            setProduct(found);
-            setActiveImage(found.gallery[0] || found.image);
+        if (product) {
+            setActiveImage(product.gallery[0] || product.image);
         }
-    }, [id]);
+    }, [product]);
 
     const handleAddToCart = () => {
         if (!product) return;
@@ -35,14 +36,25 @@ export default function ProductDetail() {
         setTimeout(() => setAddedToCart(false), 3000);
     };
 
-    if (!product) return (
+    if (loading) return (
         <div className="h-screen flex items-center justify-center">
             <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin"></div>
         </div>
     );
 
-    const recommendations = products
-        .filter(p => p.category === product.category && p.id !== product.id)
+    if (!product) return (
+        <div className="h-screen flex items-center justify-center text-center">
+            <div>
+                <h2 className="text-3xl font-display mb-4">Piece not found.</h2>
+                <Link to="/shop">
+                    <Button variant="outline">Return to Collection</Button>
+                </Link>
+            </div>
+        </div>
+    );
+
+    const recommendations = allProducts
+        .filter((p: Product) => p.category === product.category && p.id !== product.id)
         .slice(0, 3);
 
     return (
@@ -305,7 +317,7 @@ export default function ProductDetail() {
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                            {recommendations.map((p) => (
+                            {recommendations.map((p: Product) => (
                                 <Link key={p.id} to={`/shop/${p.id}`} className="group">
                                     <div className="aspect-[4/5] overflow-hidden bg-secondary mb-6 group-hover:shadow-2xl transition-all duration-700">
                                         <img src={p.image} alt={p.name} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />

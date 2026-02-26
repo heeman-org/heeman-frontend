@@ -1,19 +1,21 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Search, SlidersHorizontal, ArrowRight, Star, ShoppingBag, Heart, CheckCircle2 } from "lucide-react";
 import { Button } from "../components/ui/Button";
-import { products } from "../data/products";
+import { type Product } from "../data/products";
+import { useProducts } from "../hooks/useProducts";
 import { cn } from "../lib/utils";
 import { useCart } from "../context/CartContext";
 
-const categories = ["All", ...new Set(products.map(p => p.category))];
-
 export default function Shop() {
+    const { products, loading } = useProducts();
     const [activeCategory, setActiveCategory] = useState("All");
     const [searchQuery, setSearchQuery] = useState("");
     const [lastAdded, setLastAdded] = useState<string | null>(null);
     const { addToCart } = useCart();
+
+    const categories = useMemo(() => ["All", ...new Set(products.map(p => p.category))], [products]);
 
     const filteredProducts = products.filter(p => {
         const matchesCategory = activeCategory === "All" || p.category === activeCategory;
@@ -21,13 +23,21 @@ export default function Shop() {
         return matchesCategory && matchesSearch;
     });
 
-    const handleQuickAdd = (p: typeof products[0], e: React.MouseEvent) => {
+    const handleQuickAdd = (p: Product, e: React.MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
         addToCart(p, 1);
         setLastAdded(p.name);
         setTimeout(() => setLastAdded(null), 3000);
     };
+
+    if (loading) {
+        return (
+            <div className="h-screen flex items-center justify-center">
+                <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin"></div>
+            </div>
+        );
+    }
 
     return (
         <div className="pt-32 pb-24 min-h-screen">
