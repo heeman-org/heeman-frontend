@@ -1,14 +1,27 @@
-import { motion } from "framer-motion";
-import { Heart, ShoppingBag, Star } from "lucide-react";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Heart, ShoppingBag, Star, CheckCircle2, Check } from "lucide-react";
 import { Button } from "./ui/Button";
 import { landingConstants } from "../constants";
 import { useProducts } from "../hooks/useProducts";
+import { useCart } from "../context/CartContext";
+import { type Product } from "../data/products";
 
 export const FeaturedProducts = () => {
     const { products, loading } = useProducts();
+    const { addToCart } = useCart();
+    const [lastAdded, setLastAdded] = useState<string | null>(null);
+
+    const handleQuickAdd = (p: Product, e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        addToCart(p, 1);
+        setLastAdded(p.name);
+        setTimeout(() => setLastAdded(null), 3000);
+    };
 
     return (
-        <section className="py-24" id="new-arrivals">
+        <section className="py-24 relative" id="new-arrivals">
             <div className="container mx-auto px-6">
                 <div className="text-center mb-20 max-w-2xl mx-auto">
                     <h2 className="text-accent font-medium tracking-[0.3em] uppercase text-xs mb-6">{landingConstants.featuredProducts.subtitle}</h2>
@@ -39,14 +52,40 @@ export const FeaturedProducts = () => {
                                                 {p.tag}
                                             </span>
                                         </div>
-                                        <div className="absolute top-4 right-4">
+                                        <div className="absolute top-4 right-4 z-10">
                                             <Button variant="ghost" size="icon" className="bg-white/80 hover:bg-white rounded-full opacity-0 group-hover:opacity-100 transition-all translate-y-2 group-hover:translate-y-0">
                                                 <Heart size={16} />
                                             </Button>
                                         </div>
-                                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                            <Button variant="accent" className="translate-y-4 group-hover:translate-y-0 transition-transform">
-                                                <ShoppingBag size={18} className="mr-2" /> Add to Cart
+                                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none group-hover:pointer-events-auto">
+                                            <Button
+                                                variant={lastAdded === p.name ? "outline" : "accent"}
+                                                onClick={(e) => handleQuickAdd(p, e)}
+                                                className="translate-y-4 group-hover:translate-y-0 transition-all pointer-events-auto overflow-hidden min-w-[140px]"
+                                            >
+                                                <AnimatePresence mode="wait" initial={false}>
+                                                    {lastAdded === p.name ? (
+                                                        <motion.div
+                                                            key="added"
+                                                            initial={{ y: 20, opacity: 0 }}
+                                                            animate={{ y: 0, opacity: 1 }}
+                                                            exit={{ y: -20, opacity: 0 }}
+                                                            className="flex items-center gap-2"
+                                                        >
+                                                            <Check size={18} /> Added
+                                                        </motion.div>
+                                                    ) : (
+                                                        <motion.div
+                                                            key="add"
+                                                            initial={{ y: 20, opacity: 0 }}
+                                                            animate={{ y: 0, opacity: 1 }}
+                                                            exit={{ y: -20, opacity: 0 }}
+                                                            className="flex items-center gap-2"
+                                                        >
+                                                            <ShoppingBag size={18} /> Add to Cart
+                                                        </motion.div>
+                                                    )}
+                                                </AnimatePresence>
                                             </Button>
                                         </div>
                                     </div>
@@ -76,6 +115,21 @@ export const FeaturedProducts = () => {
                     </Button>
                 </div>
             </div>
+
+            {/* Notification */}
+            <AnimatePresence>
+                {lastAdded && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 50, x: "-50%" }}
+                        animate={{ opacity: 1, y: 0, x: "-50%" }}
+                        exit={{ opacity: 0, y: 20, x: "-50%" }}
+                        className="fixed bottom-12 left-1/2 z-[150] bg-primary text-white px-8 py-4 shadow-2xl flex items-center gap-4 border border-accent/20"
+                    >
+                        <CheckCircle2 className="text-accent" size={18} />
+                        <p className="text-xs font-bold uppercase tracking-widest">Added <span className="text-accent italic">{lastAdded}</span> to cart</p>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </section>
     );
 };

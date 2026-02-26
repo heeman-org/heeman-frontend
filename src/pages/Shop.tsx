@@ -1,27 +1,72 @@
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Search, SlidersHorizontal, ArrowRight, Star, ShoppingBag, Heart, CheckCircle2 } from "lucide-react";
+import {
+    ArrowRight, Star,
+    ShoppingBag, CheckCircle2, X, Filter, Check
+} from "lucide-react";
 import { Button } from "../components/ui/Button";
 import { type Product } from "../data/products";
 import { useProducts } from "../hooks/useProducts";
 import { cn } from "../lib/utils";
 import { useCart } from "../context/CartContext";
+import { ShopFilterSidebar, type SortOption } from "../components/ShopFilterSidebar";
+import { ShopFilterBar } from "../components/ShopFilterBar";
 
 export default function Shop() {
     const { products, loading } = useProducts();
     const [activeCategory, setActiveCategory] = useState("All");
+    const [activeMaterial, setActiveMaterial] = useState("All");
     const [searchQuery, setSearchQuery] = useState("");
+    const [priceRange, setPriceRange] = useState<[number, number]>([0, 10000]);
+    const [sortBy, setSortBy] = useState<SortOption>("newest");
+    const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [lastAdded, setLastAdded] = useState<string | null>(null);
     const { addToCart } = useCart();
 
-    const categories = useMemo(() => ["All", ...new Set(products.map(p => p.category))], [products]);
+    // Reset filters
+    const resetFilters = () => {
+        setActiveCategory("All");
+        setActiveMaterial("All");
+        setSearchQuery("");
+        setPriceRange([0, 10000]);
+        setSortBy("newest");
+    };
 
-    const filteredProducts = products.filter(p => {
-        const matchesCategory = activeCategory === "All" || p.category === activeCategory;
-        const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase());
-        return matchesCategory && matchesSearch;
-    });
+    const categories = useMemo(() => ["All", ...new Set(products.map(p => p.category))], [products]);
+    const materials = useMemo(() => ["All", ...new Set(products.map(p => p.details.material))], [products]);
+
+    // Parse price string to number for comparison
+    const parsePrice = (priceStr: string | number) => {
+        if (typeof priceStr === "number") return priceStr;
+        return parseFloat(priceStr.replace(/[^0-9.]/g, ""));
+    };
+
+    const filteredAndSortedProducts = useMemo(() => {
+        let result = products.filter(p => {
+            const price = parsePrice(p.price);
+            const matchesCategory = activeCategory === "All" || p.category === activeCategory;
+            const matchesMaterial = activeMaterial === "All" || p.details.material === activeMaterial;
+            const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                p.description.toLowerCase().includes(searchQuery.toLowerCase());
+            const matchesPrice = price >= priceRange[0] && price <= priceRange[1];
+
+            return matchesCategory && matchesMaterial && matchesSearch && matchesPrice;
+        });
+
+        // Sorting logic
+        result.sort((a, b) => {
+            const priceA = parsePrice(a.price);
+            const priceB = parsePrice(b.price);
+
+            if (sortBy === "price-low") return priceA - priceB;
+            if (sortBy === "price-high") return priceB - priceA;
+            if (sortBy === "rating") return b.rating - a.rating;
+            return 0;
+        });
+
+        return result;
+    }, [products, activeCategory, activeMaterial, searchQuery, priceRange, sortBy]);
 
     const handleQuickAdd = (p: Product, e: React.MouseEvent) => {
         e.preventDefault();
@@ -40,14 +85,27 @@ export default function Shop() {
     }
 
     return (
-        <div className="pt-32 pb-24 min-h-screen">
+        <div className="pt-32 pb-24 min-h-screen relative">
+            <ShopFilterSidebar
+                isOpen={isFilterOpen}
+                onClose={() => setIsFilterOpen(false)}
+                priceRange={priceRange}
+                setPriceRange={setPriceRange}
+                activeMaterial={activeMaterial}
+                setActiveMaterial={setActiveMaterial}
+                materials={materials}
+                sortBy={sortBy}
+                setSortBy={setSortBy}
+                onReset={resetFilters}
+            />
+
             <div className="container mx-auto px-6">
                 {/* Header */}
                 <div className="max-w-2xl mb-20">
                     <motion.span
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
-                        className="text-accent font-bold tracking-[0.3em] uppercase text-[10px] mb-6 block"
+                        className="text-accent font-bold tracking-[0.3em] uppercase text-[12px] mb-6 block"
                     >
                         Heeman Collections
                     </motion.span>
@@ -63,122 +121,133 @@ export default function Shop() {
                 </div>
 
                 {/* Search & Filter Bar */}
-                <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8 mb-16 pb-8 border-b border-foreground/5">
-                    {/* Categories */}
-                    <div className="flex flex-wrap gap-3">
-                        {categories.map((cat) => (
-                            <button
-                                key={cat}
-                                onClick={() => setActiveCategory(cat)}
-                                className={cn(
-                                    "px-6 py-2.5 text-[11px] font-bold uppercase tracking-[0.1em] transition-all duration-300 border",
-                                    activeCategory === cat
-                                        ? "bg-primary text-white border-primary"
-                                        : "bg-transparent text-foreground/40 border-foreground/10 hover:border-foreground/30"
-                                )}
-                            >
-                                {cat}
-                            </button>
-                        ))}
-                    </div>
+                <ShopFilterBar
+                    categories={categories}
+                    activeCategory={activeCategory}
+                    setActiveCategory={setActiveCategory}
+                    searchQuery={searchQuery}
+                    setSearchQuery={setSearchQuery}
+                    onOpenFilters={() => setIsFilterOpen(true)}
+                    isFilterActive={priceRange[0] > 0 || priceRange[1] < 10000 || sortBy !== "newest" || activeMaterial !== "All"}
+                />
 
-                    <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
-                        <div className="relative group w-full sm:w-80">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-foreground/30 size-4 group-focus-within:text-accent transition-colors" />
-                            <input
-                                type="text"
-                                placeholder="Search collection..."
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full bg-secondary/50 border border-transparent focus:border-accent/30 py-4 pl-12 pr-6 outline-none text-sm transition-all"
-                            />
-                        </div>
-                        <Button variant="outline" className="h-full py-4 border-foreground/10 flex gap-3">
-                            <SlidersHorizontal size={16} /> Filters
-                        </Button>
-                    </div>
+                {/* Sub-Actions & Result Count */}
+                <div className="flex justify-between items-center mb-12">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/30">
+                        Exhibiting <span className="text-primary">{filteredAndSortedProducts.length}</span> Rare Pieces
+                    </p>
+                    {(activeCategory !== "All" || activeMaterial !== "All" || searchQuery || priceRange[0] > 0 || priceRange[1] < 10000) && (
+                        <button
+                            onClick={resetFilters}
+                            className="text-[10px] font-bold uppercase tracking-[0.2em] text-accent hover:underline flex items-center gap-2"
+                        >
+                            <X size={12} /> Dissolve Filters
+                        </button>
+                    )}
                 </div>
 
                 {/* Product Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16">
-                    {filteredProducts.map((p, i) => (
-                        <motion.div
-                            key={p.id}
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ delay: (i % 3) * 0.1 }}
-                            className="group"
-                        >
-                            <Link to={`/shop/${p.id}`} className="block">
-                                <div className="relative aspect-[4/5] overflow-hidden bg-secondary mb-6 group-hover:shadow-[0_30px_60px_rgba(0,0,0,0.12)] transition-all duration-700">
-                                    <img
-                                        src={p.img}
-                                        alt={p.name}
-                                        className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
-                                    />
+                    <AnimatePresence mode="popLayout">
+                        {filteredAndSortedProducts.map((p, i) => (
+                            <motion.div
+                                key={p.id}
+                                layout
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, scale: 0.95 }}
+                                transition={{ duration: 0.5, delay: (i % 3) * 0.05 }}
+                                className="group"
+                            >
+                                <div className="relative aspect-[4/5] overflow-hidden bg-secondary mb-6 group-hover:shadow-[0_40px_80px_rgba(0,0,0,0.15)] transition-all duration-700">
+                                    <Link to={`/shop/${p.id}`} className="block h-full w-full">
+                                        <img
+                                            src={p.img}
+                                            alt={p.name}
+                                            className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                                        />
+                                    </Link>
 
                                     {/* Badge */}
-                                    <div className="absolute top-6 left-6">
+                                    <div className="absolute top-6 left-6 pointer-events-none">
                                         <span className="bg-white/95 backdrop-blur-md px-4 py-1.5 text-[9px] font-bold uppercase tracking-[0.2em] text-primary shadow-sm border border-black/5">
                                             {p.tag}
                                         </span>
                                     </div>
 
                                     {/* Actions Overlay */}
-                                    <div className="absolute top-6 right-6 flex flex-col gap-3 translate-x-12 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-500">
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            className="bg-white/95 backdrop-blur-md rounded-full size-10 shadow-sm border border-black/5 hover:bg-accent hover:text-white transition-all"
-                                            onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
-                                        >
-                                            <Heart size={16} />
-                                        </Button>
+                                    <div className="absolute top-6 right-6 flex flex-col gap-3 translate-x-12 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-500 z-10">
                                         <Button
                                             variant="ghost"
                                             size="icon"
                                             onClick={(e) => handleQuickAdd(p, e)}
-                                            className="bg-white/95 backdrop-blur-md rounded-full size-10 shadow-sm border border-black/5 hover:bg-accent hover:text-white transition-all"
+                                            className={cn(
+                                                "bg-white/95 backdrop-blur-md rounded-full size-10 shadow-sm border border-black/5 transition-all ring-0 focus:ring-0",
+                                                lastAdded === p.name ? "bg-accent text-white" : "hover:bg-accent hover:text-white"
+                                            )}
                                         >
-                                            <ShoppingBag size={16} />
+                                            <AnimatePresence mode="wait">
+                                                {lastAdded === p.name ? (
+                                                    <motion.div
+                                                        key="check"
+                                                        initial={{ scale: 0, rotate: -90 }}
+                                                        animate={{ scale: 1, rotate: 0 }}
+                                                        exit={{ scale: 0, rotate: 90 }}
+                                                        transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                                                    >
+                                                        <Check size={16} />
+                                                    </motion.div>
+                                                ) : (
+                                                    <motion.div
+                                                        key="bag"
+                                                        initial={{ scale: 0 }}
+                                                        animate={{ scale: 1 }}
+                                                        exit={{ scale: 0 }}
+                                                    >
+                                                        <ShoppingBag size={16} />
+                                                    </motion.div>
+                                                )}
+                                            </AnimatePresence>
                                         </Button>
                                     </div>
 
-                                    <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                                    <Link to={`/shop/${p.id}`} className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
                                 </div>
-                            </Link>
 
-                            <div className="flex flex-col">
-                                <div className="flex justify-between items-start mb-2">
-                                    <span className="text-[10px] uppercase tracking-[0.2em] text-foreground/30 font-bold">{p.category}</span>
-                                    <div className="flex items-center gap-1">
-                                        <Star size={10} className="fill-accent text-accent" />
-                                        <span className="text-[10px] font-bold">{p.rating}</span>
+                                <div className="flex flex-col">
+                                    <div className="flex justify-between items-start mb-2">
+                                        <span className="text-[10px] uppercase tracking-[0.2em] text-foreground/30 font-bold">{p.category}</span>
+                                        <div className="flex items-center gap-1">
+                                            <Star size={10} className="fill-accent text-accent" />
+                                            <span className="text-[10px] font-bold">{p.rating}</span>
+                                        </div>
+                                    </div>
+
+                                    <Link to={`/shop/${p.id}`}>
+                                        <h3 className="text-2xl font-display mb-3 group-hover:text-accent transition-colors">{p.name}</h3>
+                                    </Link>
+
+                                    <div className="flex justify-between items-end">
+                                        <span className="text-xl font-display italic text-accent">{p.price}</span>
+                                        <Link to={`/shop/${p.id}`} className="group/link flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-foreground/40 hover:text-primary transition-colors">
+                                            Explore Details <ArrowRight size={14} className="group-hover/link:translate-x-1 transition-transform" />
+                                        </Link>
                                     </div>
                                 </div>
-
-                                <Link to={`/shop/${p.id}`}>
-                                    <h3 className="text-2xl font-display mb-3 group-hover:text-accent transition-colors">{p.name}</h3>
-                                </Link>
-
-                                <div className="flex justify-between items-end">
-                                    <span className="text-xl font-display italic text-accent">{p.price}</span>
-                                    <Link to={`/shop/${p.id}`} className="group/link flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-foreground/40 hover:text-primary transition-colors">
-                                        Explore Details <ArrowRight size={14} className="group-hover/link:translate-x-1 transition-transform" />
-                                    </Link>
-                                </div>
-                            </div>
-                        </motion.div>
-                    ))}
+                            </motion.div>
+                        ))}
+                    </AnimatePresence>
                 </div>
 
-                {filteredProducts.length === 0 && (
-                    <div className="py-24 text-center">
-                        <h3 className="text-3xl font-display mb-4">No pieces found.</h3>
-                        <p className="text-foreground/40 mb-8">Try adjusting your filters or search query.</p>
-                        <Button onClick={() => { setActiveCategory("All"); setSearchQuery(""); }} variant="outline">
-                            Clear All Filters
+                {filteredAndSortedProducts.length === 0 && (
+                    <div className="py-32 flex flex-col items-center justify-center border-y border-foreground/5 bg-secondary/10">
+                        <Filter className="size-12 text-foreground/10 mb-6" />
+                        <h3 className="text-3xl font-display mb-4 italic">No echoes found.</h3>
+                        <p className="text-foreground/40 mb-12 max-w-xs text-center text-sm leading-relaxed">
+                            Your refinements were too specific for our current collection. Try relaxing your parameters.
+                        </p>
+                        <Button onClick={resetFilters} variant="outline" className="px-12">
+                            Reset All Refinements
                         </Button>
                     </div>
                 )}
@@ -191,7 +260,7 @@ export default function Shop() {
                         initial={{ opacity: 0, y: 50, x: "-50%" }}
                         animate={{ opacity: 1, y: 0, x: "-50%" }}
                         exit={{ opacity: 0, y: 20, x: "-50%" }}
-                        className="fixed bottom-12 left-1/2 z-[100] bg-primary text-white px-8 py-4 shadow-2xl flex items-center gap-4 border border-accent/20"
+                        className="fixed bottom-12 left-1/2 z-[150] bg-primary text-white px-8 py-4 shadow-2xl flex items-center gap-4 border border-accent/20"
                     >
                         <CheckCircle2 className="text-accent" size={18} />
                         <p className="text-xs font-bold uppercase tracking-widest">Added <span className="text-accent italic">{lastAdded}</span> to collection</p>
