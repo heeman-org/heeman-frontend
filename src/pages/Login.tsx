@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 import { authClient } from "../lib/auth-client";
 import { Button } from "../components/ui/Button";
-import { LogIn, Mail, Lock, ArrowRight, Loader2 } from "lucide-react";
+import { Mail, Lock, ArrowRight, Loader2 } from "lucide-react";
 
 export default function Login() {
     const [email, setEmail] = useState("");
@@ -24,7 +24,21 @@ export default function Login() {
             });
 
             if (error) {
-                setError(error.message || "Invalid credentials");
+                // Handle unverified user error
+                if (error.message?.toLowerCase().includes("verify") || error.status === 403) {
+                    setError("Email not verified. Redirecting to verification...");
+                    localStorage.setItem("heman_pending_verification", email);
+
+                    // Trigger a fresh OTP for them
+                    await authClient.emailOtp.sendVerificationOtp({
+                        email,
+                        type: "sign-in",
+                    });
+
+                    setTimeout(() => navigate("/signup"), 1500);
+                } else {
+                    setError(error.message || "Invalid credentials");
+                }
             } else {
                 navigate("/");
             }
@@ -36,7 +50,7 @@ export default function Login() {
     };
 
     return (
-        <div className="min-h-screen bg-white flex items-center justify-center p-6 pt-32">
+        <div className="min-h-screen bg-white flex items-center justify-center p-6 pt-32 font-serif text-primary">
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -44,12 +58,15 @@ export default function Login() {
             >
                 <div className="text-center mb-10">
                     <h1 className="text-4xl font-display font-bold tracking-tight mb-3">Welcome Back</h1>
-                    <p className="text-primary/60 text-sm italic">Enter your details to access your account</p>
+                    <p className="text-primary/60 text-sm italic">Enter your credentials to access your profile</p>
                 </div>
 
                 <form onSubmit={handleLogin} className="space-y-6">
                     {error && (
-                        <div className="p-3 bg-red-50 text-red-500 text-xs font-semibold uppercase tracking-wider text-center border border-red-100 italic">
+                        <div className={`p-3 text-xs font-semibold uppercase tracking-wider text-center border italic ${error.includes("Redirecting")
+                            ? "bg-amber-50 text-amber-600 border-amber-100"
+                            : "bg-red-50 text-red-500 border-red-100"
+                            }`}>
                             {error}
                         </div>
                     )}
@@ -95,11 +112,11 @@ export default function Login() {
                     </Button>
                 </form>
 
-                <div className="mt-8 text-center">
+                <div className="mt-8 text-center border-t border-zinc-100 pt-8">
                     <p className="text-sm text-primary/50">
                         Don't have an account?{" "}
                         <Link to="/signup" className="text-accent font-bold hover:underline transition-all underline-offset-4">
-                            Create Account
+                            Establish Profile
                         </Link>
                     </p>
                 </div>
