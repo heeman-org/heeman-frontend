@@ -1,9 +1,13 @@
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { Button } from "./ui/Button";
-import { landingConstants } from "../constants";
+import { useConstants } from "../context/ConstantsContext";
 
 export const AboutUs = () => {
+    const { landingConstants, loading } = useConstants();
+
+    if (loading || !landingConstants) return <div className="py-32 flex justify-center">Loading...</div>;
+
     return (
         <section className="py-32 container mx-auto px-6 overflow-hidden" id="our-story">
             <div className="grid lg:grid-cols-2 gap-24 items-center">
@@ -39,7 +43,7 @@ export const AboutUs = () => {
                     <h2 className="text-accent font-medium tracking-[0.3em] uppercase text-xs mb-6">{landingConstants.aboutUs.subtitle}</h2>
                     <h2 className="text-4xl md:text-5xl font-display mb-8 leading-tight">{landingConstants.aboutUs.titleLine1} <br /><span className="italic">{landingConstants.aboutUs.titleLine2}</span></h2>
                     <div className="space-y-6 text-foreground/70 leading-relaxed mb-10">
-                        {landingConstants.aboutUs.paragraphs.map((p, i) => (
+                        {landingConstants.aboutUs.paragraphs.map((p: string, i: number) => (
                             <p key={i}>{p}</p>
                         ))}
                     </div>

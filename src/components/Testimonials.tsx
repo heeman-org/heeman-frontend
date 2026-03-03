@@ -1,8 +1,12 @@
 import { motion } from "framer-motion";
 import { Star, Quote } from "lucide-react";
-import { landingConstants } from "../constants";
+import { useConstants } from "../context/ConstantsContext";
 
 export const Testimonials = () => {
+    const { landingConstants, loading } = useConstants();
+
+    if (loading || !landingConstants) return null;
+
     return (
         <section className="py-32 bg-secondary/30">
             <div className="container mx-auto px-6">
@@ -12,7 +16,7 @@ export const Testimonials = () => {
                 </div>
 
                 <div className="grid md:grid-cols-3 gap-8">
-                    {landingConstants.testimonials.reviews.map((rev, i) => (
+                    {landingConstants.testimonials.reviews.map((rev: any, i: number) => (
                         <motion.div
                             key={i}
                             initial={{ opacity: 0, y: 20 }}

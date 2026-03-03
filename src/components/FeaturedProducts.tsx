@@ -2,15 +2,18 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Heart, ShoppingBag, Star, CheckCircle2, Check } from "lucide-react";
 import { Button } from "./ui/Button";
-import { landingConstants } from "../constants";
+import { useConstants } from "../context/ConstantsContext";
 import { useProducts } from "../hooks/useProducts";
 import { useCart } from "../context/CartContext";
 import { type Product } from "../data/products";
 
 export const FeaturedProducts = () => {
-    const { products, loading } = useProducts();
+    const { products, loading: productsLoading } = useProducts();
     const { addToCart } = useCart();
     const [lastAdded, setLastAdded] = useState<string | null>(null);
+    const { landingConstants, loading: constantsLoading } = useConstants();
+
+    if (constantsLoading || !landingConstants) return null;
 
     const handleQuickAdd = (p: Product, e: React.MouseEvent) => {
         e.preventDefault();
@@ -31,7 +34,7 @@ export const FeaturedProducts = () => {
                     </p>
                 </div>
 
-                {loading ? (
+                {productsLoading ? (
                     <div className="text-center py-20 text-foreground/50 italic tracking-widest uppercase text-xs">Curating Collection...</div>
                 ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">

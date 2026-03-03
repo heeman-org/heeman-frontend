@@ -1,7 +1,11 @@
 import { motion } from "framer-motion";
-import { landingConstants } from "../constants";
+import { useConstants } from "../context/ConstantsContext";
 
 export const Process = () => {
+    const { landingConstants, loading } = useConstants();
+
+    if (loading || !landingConstants) return null;
+
     return (
         <section className="py-24 bg-primary text-white overflow-hidden">
             <div className="container mx-auto px-6">
@@ -16,7 +20,7 @@ export const Process = () => {
                 </div>
 
                 <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-12">
-                    {landingConstants.process.steps.map((step, i) => (
+                    {landingConstants.process.steps.map((step: any, i: number) => (
                         <motion.div
                             key={i}
                             initial={{ opacity: 0, y: 30 }}

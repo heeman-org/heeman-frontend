@@ -3,22 +3,29 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import * as LucideIcons from "lucide-react";
 import { Button } from "../components/ui/Button";
-import { contactConstants } from "../constants";
+import { useConstants } from "../context/ConstantsContext";
 import { authClient } from "../lib/auth-client";
 
 export default function Contact() {
     const { data: session, isPending } = authClient.useSession();
     const navigate = useNavigate();
+    const { contactConstants, loading: constantsLoading } = useConstants();
 
     const [formData, setFormData] = useState({
         name: "",
         email: "",
-        subject: contactConstants.form.fields.subject.options[0],
+        subject: "",
         message: ""
     });
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
     const [error, setError] = useState("");
+
+    useEffect(() => {
+        if (contactConstants && !formData.subject) {
+            setFormData(prev => ({ ...prev, subject: contactConstants.form.fields.subject.options[0] }));
+        }
+    }, [contactConstants]);
 
     // Populate user data once session is loaded
     useEffect(() => {
@@ -80,7 +87,7 @@ export default function Contact() {
         }
     };
 
-    if (isPending) {
+    if (isPending || constantsLoading || !contactConstants) {
         return (
             <div className="pt-32 pb-24 min-h-screen flex items-center justify-center">
                 <LucideIcons.Loader2 className="h-8 w-8 animate-spin text-accent" />
@@ -96,7 +103,7 @@ export default function Contact() {
                     <motion.span
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
-                        className="text-accent font-bold tracking-[0.3em] uppercase text-xs mb-6 block"
+                        className="text-accent font-bold tracking-[0.3em] uppercase text-md mb-6 block"
                     >
                         {contactConstants.header.subtitle}
                     </motion.span>
@@ -175,7 +182,7 @@ export default function Contact() {
                                     disabled={loading}
                                     className="w-full bg-transparent border-b border-foreground/10 py-3 outline-none focus:border-accent transition-colors appearance-none cursor-pointer disabled:opacity-50"
                                 >
-                                    {contactConstants.form.fields.subject.options.map((opt, i) => (
+                                    {contactConstants.form.fields.subject.options.map((opt: string, i: number) => (
                                         <option key={i} value={opt}>{opt}</option>
                                     ))}
                                 </select>
@@ -216,7 +223,7 @@ export default function Contact() {
                         <div>
                             <h3 className="text-xl font-display mb-8">{contactConstants.details.studios.title}</h3>
                             <div className="space-y-10">
-                                {contactConstants.details.studios.locations.map((loc, i) => (
+                                {contactConstants.details.studios.locations.map((loc: any, i: number) => (
                                     <div key={i} className="flex gap-6 items-start">
                                         <div className="w-12 h-12 bg-white flex items-center justify-center border border-foreground/5 shadow-sm shrink-0">
                                             <LucideIcons.MapPin size={20} className="text-accent" />

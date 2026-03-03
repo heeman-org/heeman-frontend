@@ -1,8 +1,12 @@
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
-import { landingConstants } from "../constants";
+import { useConstants } from "../context/ConstantsContext";
 
 export const Categories = () => {
+    const { landingConstants, loading } = useConstants();
+
+    if (loading || !landingConstants) return null;
+
     return (
         <section className="py-24 container mx-auto px-6" id="collections">
             <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
@@ -16,7 +20,7 @@ export const Categories = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {landingConstants.categories.items.map((cat, i) => (
+                {landingConstants.categories.items.map((cat: any, i: number) => (
                     <motion.div
                         key={i}
                         whileHover={{ scale: 0.98 }}

@@ -1,9 +1,13 @@
 import { motion } from "framer-motion";
 import { ChevronRight } from "lucide-react";
 import { Button } from "./ui/Button";
-import { landingConstants } from "../constants";
+import { useConstants } from "../context/ConstantsContext";
 
 export const Hero = () => {
+    const { landingConstants, loading } = useConstants();
+
+    if (loading || !landingConstants) return <div className="h-screen w-full flex items-center justify-center">Loading...</div>;
+
     return (
         <section className="relative h-screen flex items-center pt-20 overflow-hidden">
             {/* Background Image with Overlay */}

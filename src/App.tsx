@@ -7,27 +7,30 @@ import Shop from "./pages/Shop";
 import ProductDetail from "./pages/ProductDetail";
 import Cart from "./pages/Cart";
 import { CartProvider } from "./context/CartContext";
+import { ConstantsProvider } from "./context/ConstantsContext";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 
 function App() {
   return (
-    <CartProvider>
-      <Router>
-        <Routes>
-          <Route path="/" element={<Layout />}>
-            <Route index element={<Home />} />
-            <Route path="about" element={<About />} />
-            <Route path="contact" element={<Contact />} />
-            <Route path="shop" element={<Shop />} />
-            <Route path="shop/:id" element={<ProductDetail />} />
-            <Route path="cart" element={<Cart />} />
-            <Route path="login" element={<Login />} />
-            <Route path="signup" element={<Signup />} />
-          </Route>
-        </Routes>
-      </Router>
-    </CartProvider>
+    <ConstantsProvider>
+      <CartProvider>
+        <Router>
+          <Routes>
+            <Route path="/" element={<Layout />}>
+              <Route index element={<Home />} />
+              <Route path="about" element={<About />} />
+              <Route path="contact" element={<Contact />} />
+              <Route path="shop" element={<Shop />} />
+              <Route path="shop/:id" element={<ProductDetail />} />
+              <Route path="cart" element={<Cart />} />
+              <Route path="login" element={<Login />} />
+              <Route path="signup" element={<Signup />} />
+            </Route>
+          </Routes>
+        </Router>
+      </CartProvider>
+    </ConstantsProvider>
   );
 }
 

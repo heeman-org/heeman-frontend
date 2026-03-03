@@ -1,9 +1,15 @@
 import { motion } from "framer-motion";
 import * as LucideIcons from "lucide-react";
 import { Button } from "../components/ui/Button";
-import { aboutConstants } from "../constants";
+import { useConstants } from "../context/ConstantsContext";
 
 export default function About() {
+    const { aboutConstants, loading } = useConstants();
+
+    if (loading || !aboutConstants) {
+        return <div className="h-screen w-full flex items-center justify-center">Loading...</div>;
+    }
+
     return (
         <div className="pt-32 pb-24">
             {/* Hero Section */}
@@ -82,7 +88,7 @@ export default function About() {
                             <h3 className="text-4xl font-display leading-tight">{aboutConstants.philosophy.title}</h3>
                         </div>
                         <div className="lg:col-span-2 grid md:grid-cols-2 gap-12">
-                            {aboutConstants.philosophy.items.map((item, i) => {
+                            {aboutConstants.philosophy.items.map((item: any, i: number) => {
                                 const Icon = (LucideIcons as any)[item.icon];
                                 return (
                                     <div key={i} className="space-y-4">
@@ -102,7 +108,7 @@ export default function About() {
             {/* Stats */}
             <section className="container mx-auto px-6 mb-32">
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-12 border-y py-20 border-foreground/10">
-                    {aboutConstants.stats.map((stat, i) => (
+                    {aboutConstants.stats.map((stat: any, i: number) => (
                         <div key={i} className="text-center">
                             <h4 className="text-5xl font-display mb-2">{stat.value}</h4>
                             <p className="text-[10px] uppercase tracking-[0.3em] font-bold text-foreground/60">{stat.label}</p>
