@@ -2,11 +2,27 @@ import { motion } from "framer-motion";
 import { ChevronRight } from "lucide-react";
 import { Button } from "./ui/Button";
 import { useConstants } from "../context/ConstantsContext";
+import { Skeleton } from "./ui/Skeleton";
 
 export const Hero = () => {
     const { landingConstants, loading } = useConstants();
 
-    if (loading || !landingConstants) return <div className="h-screen w-full flex items-center justify-center">Loading...</div>;
+    if (loading || !landingConstants) return (
+        <section className="relative h-screen flex items-center pt-20 overflow-hidden bg-primary/5">
+            <div className="container mx-auto px-6 relative z-10">
+                <div className="max-w-3xl">
+                    <Skeleton className="h-4 w-32 mb-6 bg-gray-300 rounded-sm" />
+                    <Skeleton className="h-24 w-full md:w-3/4 mb-4 bg-gray-400" />
+                    <Skeleton className="h-24 w-full md:w-2/3 mb-8 bg-gray-400" />
+                    <Skeleton className="h-6 w-full max-w-lg mb-12 bg-gray-200 rounded-sm" />
+                    <div className="flex flex-wrap gap-6">
+                        <Skeleton className="h-14 w-40 rounded-none bg-gray-300" />
+                        <Skeleton className="h-14 w-40 rounded-none bg-gray-300" />
+                    </div>
+                </div>
+            </div>
+        </section>
+    );
 
     return (
         <section className="relative h-screen flex items-center pt-20 overflow-hidden">

@@ -1,10 +1,33 @@
 import { motion } from "framer-motion";
 import { useConstants } from "../context/ConstantsContext";
+import { Skeleton } from "./ui/Skeleton";
 
 export const Process = () => {
     const { landingConstants, loading } = useConstants();
 
-    if (loading || !landingConstants) return null;
+    if (loading || !landingConstants) return (
+        <section className="py-24 bg-primary text-white overflow-hidden">
+            <div className="container mx-auto px-6">
+                <div className="flex flex-col md:flex-row justify-between items-end mb-20 gap-8">
+                    <div className="max-w-xl w-full">
+                        <Skeleton className="h-4 w-32 mb-6 bg-gray-500 rounded-sm" />
+                        <Skeleton className="h-12 w-3/4 bg-gray-600 rounded-sm" />
+                    </div>
+                    <Skeleton className="h-20 w-full max-w-xs bg-gray-500 rounded-sm" />
+                </div>
+
+                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-12">
+                    {Array.from({ length: 4 }).map((_, i) => (
+                        <div key={i} className="flex flex-col">
+                            <Skeleton className="h-16 w-12 mb-6 bg-gray-500 rounded-sm" />
+                            <Skeleton className="h-6 w-3/4 mb-4 bg-gray-500 rounded-sm" />
+                            <Skeleton className="h-24 w-full bg-gray-600 rounded-sm" />
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </section>
+    );
 
     return (
         <section className="py-24 bg-primary text-white overflow-hidden">

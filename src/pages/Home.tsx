@@ -1,5 +1,6 @@
 import { Suspense, lazy } from "react";
 import { Hero } from "../components/Hero";
+import { Skeleton } from "../components/ui/Skeleton";
 
 // Lazy loading components below the fold
 const Categories = lazy(() => import("../components/Categories").then(m => ({ default: m.Categories })));
@@ -9,8 +10,20 @@ const Process = lazy(() => import("../components/Process").then(m => ({ default:
 const Testimonials = lazy(() => import("../components/Testimonials").then(m => ({ default: m.Testimonials })));
 
 const SectionLoader = () => (
-    <div className="py-24 flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin"></div>
+    <div className="py-24 container mx-auto px-6">
+        <div className="flex flex-col items-center justify-center space-y-4 mb-16">
+            <Skeleton className="h-4 w-24 bg-gray-200 rounded-sm" />
+            <Skeleton className="h-10 w-64 bg-gray-300" />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="flex flex-col gap-4">
+                    <Skeleton className="aspect-square w-full rounded-none bg-gray-200" />
+                    <Skeleton className="h-4 w-3/4 bg-gray-300 rounded-sm" />
+                    <Skeleton className="h-4 w-1/2 bg-gray-200 rounded-sm" />
+                </div>
+            ))}
+        </div>
     </div>
 );
 

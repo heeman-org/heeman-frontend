@@ -12,6 +12,7 @@ import { useProduct } from "../hooks/useProduct";
 import { useProducts } from "../hooks/useProducts";
 import { cn } from "../lib/utils";
 import { useCart } from "../context/CartContext";
+import { ProductDetailSkeleton } from "../components/ProductDetailSkeleton";
 
 export default function ProductDetail() {
     const { id } = useParams();
@@ -36,11 +37,7 @@ export default function ProductDetail() {
         setTimeout(() => setAddedToCart(false), 3000);
     };
 
-    if (loading) return (
-        <div className="h-screen flex items-center justify-center">
-            <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin"></div>
-        </div>
-    );
+    if (loading) return <ProductDetailSkeleton />;
 
     if (!product) return (
         <div className="h-screen flex items-center justify-center text-center">

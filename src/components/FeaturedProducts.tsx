@@ -6,6 +6,7 @@ import { useConstants } from "../context/ConstantsContext";
 import { useProducts } from "../hooks/useProducts";
 import { useCart } from "../context/CartContext";
 import { type Product } from "../data/products";
+import { FeaturedProductSkeleton } from "./ProductGridSkeleton";
 
 export const FeaturedProducts = () => {
     const { products, loading: productsLoading } = useProducts();
@@ -35,7 +36,7 @@ export const FeaturedProducts = () => {
                 </div>
 
                 {productsLoading ? (
-                    <div className="text-center py-20 text-foreground/50 italic tracking-widest uppercase text-xs">Curating Collection...</div>
+                    <FeaturedProductSkeleton count={4} />
                 ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                         {products.length > 0 ? (

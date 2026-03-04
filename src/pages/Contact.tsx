@@ -5,6 +5,7 @@ import * as LucideIcons from "lucide-react";
 import { Button } from "../components/ui/Button";
 import { useConstants } from "../context/ConstantsContext";
 import { authClient } from "../lib/auth-client";
+import { Skeleton } from "../components/ui/Skeleton";
 
 export default function Contact() {
     const { data: session, isPending } = authClient.useSession();
@@ -89,8 +90,20 @@ export default function Contact() {
 
     if (isPending || constantsLoading || !contactConstants) {
         return (
-            <div className="pt-32 pb-24 min-h-screen flex items-center justify-center">
-                <LucideIcons.Loader2 className="h-8 w-8 animate-spin text-accent" />
+            <div className="pt-32 pb-24 min-h-screen container mx-auto px-6">
+                <div className="max-w-2xl mb-24">
+                    <Skeleton className="h-4 w-32 mb-6 bg-gray-200 rounded-sm" />
+                    <Skeleton className="h-16 w-3/4 mb-8 bg-gray-300 rounded-sm" />
+                    <Skeleton className="h-24 w-full bg-gray-200 rounded-sm" />
+                </div>
+                <div className="grid lg:grid-cols-2 gap-24 items-start">
+                    <Skeleton className="w-full h-[600px] bg-gray-300 rounded-none" />
+                    <div className="space-y-16">
+                        <Skeleton className="h-32 w-full bg-gray-200 rounded-sm" />
+                        <Skeleton className="h-32 w-full bg-gray-200 rounded-sm" />
+                        <Skeleton className="h-32 w-full bg-gray-200 rounded-sm" />
+                    </div>
+                </div>
             </div>
         );
     }

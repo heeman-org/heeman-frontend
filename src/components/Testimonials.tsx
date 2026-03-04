@@ -1,11 +1,41 @@
 import { motion } from "framer-motion";
 import { Star, Quote } from "lucide-react";
 import { useConstants } from "../context/ConstantsContext";
+import { Skeleton } from "./ui/Skeleton";
 
 export const Testimonials = () => {
     const { landingConstants, loading } = useConstants();
 
-    if (loading || !landingConstants) return null;
+    if (loading || !landingConstants) return (
+        <section className="py-32 bg-secondary/30">
+            <div className="container mx-auto px-6">
+                <div className="text-center mb-20 flex flex-col items-center">
+                    <Skeleton className="size-10 mb-6 bg-gray-300 rounded-sm" />
+                    <Skeleton className="h-12 w-3/4 max-w-lg bg-gray-300 rounded-sm" />
+                </div>
+
+                <div className="grid md:grid-cols-3 gap-8">
+                    {Array.from({ length: 3 }).map((_, i) => (
+                        <div key={i} className="bg-white p-10 shadow-sm border border-secondary/50">
+                            <Skeleton className="h-4 w-24 mb-6 bg-gray-200 rounded-sm" />
+                            <div className="space-y-3 mb-8">
+                                <Skeleton className="h-4 w-full bg-gray-200 rounded-sm" />
+                                <Skeleton className="h-4 w-full bg-gray-200 rounded-sm" />
+                                <Skeleton className="h-4 w-3/4 bg-gray-200 rounded-sm" />
+                            </div>
+                            <div className="flex items-center gap-4">
+                                <Skeleton className="w-12 h-12 rounded-full bg-gray-300" />
+                                <div>
+                                    <Skeleton className="h-4 w-24 mb-2 bg-gray-200 rounded-sm" />
+                                    <Skeleton className="h-3 w-16 bg-gray-200 rounded-sm" />
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </section>
+    );
 
     return (
         <section className="py-32 bg-secondary/30">

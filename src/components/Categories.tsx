@@ -1,11 +1,28 @@
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { useConstants } from "../context/ConstantsContext";
+import { Skeleton } from "./ui/Skeleton";
 
 export const Categories = () => {
     const { landingConstants, loading } = useConstants();
 
-    if (loading || !landingConstants) return null;
+    if (loading || !landingConstants) return (
+        <section className="py-24 container mx-auto px-6">
+            <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
+                <div className="max-w-xl w-full">
+                    <Skeleton className="h-4 w-32 mb-6 bg-gray-200 rounded-sm" />
+                    <Skeleton className="h-12 w-3/4 mb-4 bg-gray-300 rounded-sm" />
+                    <Skeleton className="h-12 w-1/2 bg-gray-300 rounded-sm" />
+                </div>
+                <Skeleton className="h-6 w-32 bg-gray-200 rounded-sm" />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {Array.from({ length: 4 }).map((_, i) => (
+                    <Skeleton key={i} className="aspect-[3/4] w-full rounded-none bg-gray-200" />
+                ))}
+            </div>
+        </section>
+    );
 
     return (
         <section className="py-24 container mx-auto px-6" id="collections">

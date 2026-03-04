@@ -12,6 +12,7 @@ import { cn } from "../lib/utils";
 import { useCart } from "../context/CartContext";
 import { ShopFilterSidebar, type SortOption } from "../components/ShopFilterSidebar";
 import { ShopFilterBar } from "../components/ShopFilterBar";
+import { ShopGridSkeleton } from "../components/ProductGridSkeleton";
 
 export default function Shop() {
     const { products, loading } = useProducts();
@@ -78,8 +79,8 @@ export default function Shop() {
 
     if (loading) {
         return (
-            <div className="h-screen flex items-center justify-center">
-                <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin"></div>
+            <div className="pt-32 pb-24 min-h-screen relative container mx-auto px-6">
+                <ShopGridSkeleton count={8} />
             </div>
         );
     }

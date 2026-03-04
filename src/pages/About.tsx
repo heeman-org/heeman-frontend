@@ -2,12 +2,28 @@ import { motion } from "framer-motion";
 import * as LucideIcons from "lucide-react";
 import { Button } from "../components/ui/Button";
 import { useConstants } from "../context/ConstantsContext";
+import { Skeleton } from "../components/ui/Skeleton";
 
 export default function About() {
     const { aboutConstants, loading } = useConstants();
 
     if (loading || !aboutConstants) {
-        return <div className="h-screen w-full flex items-center justify-center">Loading...</div>;
+        return (
+            <div className="pt-32 pb-24 container mx-auto px-6">
+                <div className="max-w-4xl mx-auto text-center mb-32 space-y-8 flex flex-col items-center">
+                    <Skeleton className="h-4 w-32 bg-gray-200 rounded-sm" />
+                    <Skeleton className="h-16 w-3/4 bg-gray-300 rounded-sm" />
+                    <Skeleton className="h-24 w-full max-w-2xl bg-gray-200 rounded-sm" />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 h-[60vh] md:h-[80vh] mb-32">
+                    <Skeleton className="w-full h-full bg-gray-300 rounded-none" />
+                    <div className="grid grid-rows-2 gap-8 h-full">
+                        <Skeleton className="w-full h-full bg-gray-300 rounded-none" />
+                        <Skeleton className="w-full h-full bg-gray-200 rounded-none" />
+                    </div>
+                </div>
+            </div>
+        );
     }
 
     return (
