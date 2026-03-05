@@ -25,21 +25,7 @@ export default function Login() {
             });
 
             if (error) {
-                // Handle unverified user error
-                if (error.message?.toLowerCase().includes("verify") || error.status === 403) {
-                    setError("Email not verified. Redirecting to verification...");
-                    localStorage.setItem("Heeman_pending_verification", email);
-
-                    // Trigger a fresh OTP for them
-                    await authClient.emailOtp.sendVerificationOtp({
-                        email,
-                        type: "sign-in",
-                    });
-
-                    setTimeout(() => navigate("/signup"), 1500);
-                } else {
-                    setError(error.message || "Invalid credentials");
-                }
+                setError(error.message || "Invalid credentials");
             } else {
                 navigate("/");
             }
@@ -64,10 +50,7 @@ export default function Login() {
 
                 <form onSubmit={handleLogin} className="space-y-6">
                     {error && (
-                        <div className={`p-3 text-xs font-semibold uppercase tracking-wider text-center border ${error.includes("Redirecting")
-                            ? "bg-amber-50 text-amber-600 border-amber-100"
-                            : "bg-red-50 text-red-500 border-red-100"
-                            }`}>
+                        <div className="p-3 text-xs font-semibold uppercase tracking-wider text-center border bg-red-50 text-red-500 border-red-100">
                             {error}
                         </div>
                     )}
