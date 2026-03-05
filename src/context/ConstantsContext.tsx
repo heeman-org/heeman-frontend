@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
-import { ENV } from "../config/env.config";
+import React, { createContext, useContext } from "react";
+import { landingConstants, aboutConstants, contactConstants } from "../constants";
 
 interface ConstantsContextType {
     landingConstants: any;
@@ -11,38 +11,15 @@ interface ConstantsContextType {
 const ConstantsContext = createContext<ConstantsContextType | undefined>(undefined);
 
 export const ConstantsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [constants, setConstants] = useState({
-        landingConstants: null,
-        aboutConstants: null,
-        contactConstants: null,
-    });
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        const fetchConstants = async () => {
-            try {
-                const response = await fetch(`${ENV.API_BASE_URL}/api/frontend-constants`);
-                const result = await response.json();
-
-                if (result.success && result.data) {
-                    const parsed: any = {};
-                    result.data.forEach((item: any) => {
-                        parsed[item.key] = item.value;
-                    });
-                    setConstants(parsed);
-                }
-            } catch (error) {
-                console.error("Failed to fetch constants from backend", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchConstants();
-    }, []);
+    // Since we are using local files now, loading is always false and constants are immediately available
+    const constants = {
+        landingConstants,
+        aboutConstants,
+        contactConstants,
+    };
 
     return (
-        <ConstantsContext.Provider value={{ ...constants, loading }}>
+        <ConstantsContext.Provider value={{ ...constants, loading: false }}>
             {children}
         </ConstantsContext.Provider>
     );

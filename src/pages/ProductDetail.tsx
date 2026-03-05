@@ -58,7 +58,7 @@ export default function ProductDetail() {
         <div className="pt-32 pb-24">
             <div className="container mx-auto px-6">
                 {/* Breadcrumbs */}
-                <div className="flex items-center gap-3 mb-12 text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/30">
+                <div className="flex items-center gap-3 mb-12 text-xs font-semibold uppercase tracking-[0.15em] text-foreground/40">
                     <Link to="/" className="hover:text-primary transition-colors">Home</Link>
                     <ChevronRight size={12} />
                     <Link to="/shop" className="hover:text-primary transition-colors">Shop</Link>
@@ -112,7 +112,7 @@ export default function ProductDetail() {
                                 <motion.span
                                     initial={{ opacity: 0, x: -20 }}
                                     animate={{ opacity: 1, x: 0 }}
-                                    className="bg-accent/10 text-accent px-4 py-1.5 text-[9px] font-bold uppercase tracking-[0.2em] rounded-full"
+                                    className="bg-accent/10 text-accent px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.15em] rounded-full"
                                 >
                                     {product.tag}
                                 </motion.span>
@@ -140,13 +140,13 @@ export default function ProductDetail() {
                                     <span className="text-xs font-bold ml-2">{product.rating}</span>
                                 </div>
                                 <div className="w-[1px] h-4 bg-foreground/10" />
-                                <span className="text-[10px] font-bold uppercase tracking-widest text-foreground/40">
+                                <span className="text-xs font-semibold uppercase tracking-widest text-foreground/50">
                                     {product.reviewCount} Artisanal Reviews
                                 </span>
                             </div>
 
                             <div className="flex items-baseline gap-4 mb-10">
-                                <span className="text-4xl font-display italic text-accent">{product.price}</span>
+                                <span className="text-4xl font-display text-accent">{product.price}</span>
                                 {product.originalPrice && (
                                     <span className="text-xl text-foreground/30 line-through font-display">{product.originalPrice}</span>
                                 )}
@@ -197,15 +197,15 @@ export default function ProductDetail() {
                             <div className="grid grid-cols-3 gap-4 py-8 border-y border-foreground/5 text-center">
                                 <div className="flex flex-col items-center gap-3">
                                     <ShieldCheck size={20} className="text-accent" />
-                                    <span className="text-[8px] uppercase tracking-[0.2em] font-bold opacity-50">LIFETIME WARRANTY</span>
+                                    <span className="text-xs uppercase tracking-[0.15em] font-semibold opacity-60">LIFETIME WARRANTY</span>
                                 </div>
                                 <div className="flex flex-col items-center gap-3">
                                     <Truck size={20} className="text-accent" />
-                                    <span className="text-[8px] uppercase tracking-[0.2em] font-bold opacity-50">PREMIUM DELIVERY</span>
+                                    <span className="text-xs uppercase tracking-[0.15em] font-semibold opacity-60">PREMIUM DELIVERY</span>
                                 </div>
                                 <div className="flex flex-col items-center gap-3">
                                     <RotateCcw size={20} className="text-accent" />
-                                    <span className="text-[8px] uppercase tracking-[0.2em] font-bold opacity-50">30-DAY RETURNS</span>
+                                    <span className="text-xs uppercase tracking-[0.15em] font-semibold opacity-60">30-DAY RETURNS</span>
                                 </div>
                             </div>
                         </div>
@@ -220,7 +220,7 @@ export default function ProductDetail() {
                                 key={tab}
                                 onClick={() => setActiveTab(tab.toLowerCase().split(" ")[0])}
                                 className={cn(
-                                    "text-[10px] font-bold uppercase tracking-[0.3em] pb-4 transition-all whitespace-nowrap relative",
+                                    "text-xs font-semibold uppercase tracking-[0.2em] pb-4 transition-all whitespace-nowrap relative",
                                     activeTab === tab.toLowerCase().split(" ")[0]
                                         ? "text-primary"
                                         : "text-foreground/30 hover:text-foreground/60"
@@ -246,12 +246,12 @@ export default function ProductDetail() {
                                 >
                                     <div className="space-y-6">
                                         <h3 className="text-3xl font-display mb-8">Craftsmanship and Soul</h3>
-                                        <p className="text-foreground/60 leading-relaxed italic border-l-4 border-accent pl-8 py-4 mb-8">
+                                        <p className="text-foreground/60 leading-relaxed border-l-4 border-accent pl-8 py-4 mb-8">
                                             "Every piece we create is a balance between the structure of modern geometry and the warmth of organic life."
                                         </p>
                                         <ul className="grid grid-cols-1 gap-4">
                                             {product.features.map((f, i) => (
-                                                <li key={i} className="flex gap-4 text-sm text-foreground/70">
+                                                <li key={i} className="flex gap-4 text-base text-foreground/70">
                                                     <Check size={16} className="text-accent mt-0.5 shrink-0" /> {f}
                                                 </li>
                                             ))}
@@ -278,19 +278,19 @@ export default function ProductDetail() {
                                     <h3 className="text-3xl font-display mb-12">Technical Specifications</h3>
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-24 gap-y-12">
                                         <div className="space-y-4">
-                                            <span className="text-[10px] uppercase tracking-widest font-bold opacity-30">Material Composition</span>
+                                            <span className="text-xs uppercase tracking-widest font-semibold opacity-40">Material Composition</span>
                                             <p className="text-lg font-display">{product.details.material}</p>
                                         </div>
                                         <div className="space-y-4">
-                                            <span className="text-[10px] uppercase tracking-widest font-bold opacity-30">Overall Dimensions</span>
+                                            <span className="text-xs uppercase tracking-widest font-semibold opacity-40">Overall Dimensions</span>
                                             <p className="text-lg font-display">{product.details.dimensions}</p>
                                         </div>
                                         <div className="space-y-4">
-                                            <span className="text-[10px] uppercase tracking-widest font-bold opacity-30">Artisan Finish</span>
+                                            <span className="text-xs uppercase tracking-widest font-semibold opacity-40">Artisan Finish</span>
                                             <p className="text-lg font-display">{product.details.finish}</p>
                                         </div>
                                         <div className="space-y-4">
-                                            <span className="text-[10px] uppercase tracking-widest font-bold opacity-30">Gross Weight</span>
+                                            <span className="text-xs uppercase tracking-widest font-semibold opacity-40">Gross Weight</span>
                                             <p className="text-lg font-display">{product.details.weight}</p>
                                         </div>
                                     </div>
@@ -305,10 +305,10 @@ export default function ProductDetail() {
                     <section>
                         <div className="flex justify-between items-end mb-16">
                             <div>
-                                <span className="text-accent font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Complete the look</span>
+                                <span className="text-accent font-semibold tracking-[0.2em] uppercase text-xs mb-4 block">Complete the look</span>
                                 <h2 className="text-4xl md:text-5xl font-display">You May Also Admire</h2>
                             </div>
-                            <Link to="/shop" className="text-[10px] font-bold uppercase tracking-widest pb-2 border-b border-foreground/10 hover:border-accent transition-colors flex gap-3 items-center">
+                            <Link to="/shop" className="text-xs font-semibold uppercase tracking-widest pb-2 border-b border-foreground/10 hover:border-accent transition-colors flex gap-3 items-center">
                                 Explore All <ChevronRight size={14} />
                             </Link>
                         </div>
@@ -320,7 +320,7 @@ export default function ProductDetail() {
                                         <img src={p.img} alt={p.name} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
                                     </div>
                                     <h4 className="text-2xl font-display mb-2">{p.name}</h4>
-                                    <p className="text-accent italic font-display">{p.price}</p>
+                                    <p className="text-accent font-display">{p.price}</p>
                                 </Link>
                             ))}
                         </div>
@@ -341,8 +341,8 @@ export default function ProductDetail() {
                             <CheckCircle2 size={16} />
                         </div>
                         <div>
-                            <p className="text-xs font-bold uppercase tracking-widest">Added to collection</p>
-                            <Link to="/cart" className="text-[10px] text-accent font-bold uppercase tracking-widest hover:underline">View Private Cart</Link>
+                            <p className="text-sm font-semibold uppercase tracking-widest">Added to collection</p>
+                            <Link to="/cart" className="text-xs text-accent font-semibold uppercase tracking-widest hover:underline">View Private Cart</Link>
                         </div>
                     </motion.div>
                 )}

@@ -28,9 +28,9 @@ export const FeaturedProducts = () => {
         <section className="py-24 relative" id="new-arrivals">
             <div className="container mx-auto px-6">
                 <div className="text-center mb-20 max-w-2xl mx-auto">
-                    <h2 className="text-accent font-medium tracking-[0.3em] uppercase text-xs mb-6">{landingConstants.featuredProducts.subtitle}</h2>
+                    <h2 className="text-accent font-medium tracking-[0.2em] uppercase text-sm mb-6">{landingConstants.featuredProducts.subtitle}</h2>
                     <h2 className="text-4xl md:text-5xl font-display mb-6">{landingConstants.featuredProducts.title}</h2>
-                    <p className="text-foreground/50 text-sm leading-relaxed">
+                    <p className="text-foreground/60 text-base leading-relaxed">
                         {landingConstants.featuredProducts.description}
                     </p>
                 </div>
@@ -52,7 +52,7 @@ export const FeaturedProducts = () => {
                                     <div className="relative aspect-[4/5] overflow-hidden bg-secondary mb-6 group-hover:shadow-[0_20px_50px_rgba(0,0,0,0.1)] transition-all duration-500">
                                         <img src={p.img} alt={p.name} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
                                         <div className="absolute top-4 left-4">
-                                            <span className="bg-white/90 backdrop-blur px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-primary shadow-sm">
+                                            <span className="bg-white/90 backdrop-blur px-3 py-1.5 text-xs font-semibold uppercase tracking-widest text-primary shadow-sm">
                                                 {p.tag}
                                             </span>
                                         </div>
@@ -102,13 +102,13 @@ export const FeaturedProducts = () => {
                                                 ))}
                                             </div>
                                             <h3 className="font-display text-xl mb-2">{p.name}</h3>
-                                            <p className="text-accent font-medium text-lg font-serif italic">{p.price}</p>
+                                            <p className="text-accent font-medium text-lg">{p.price}</p>
                                         </div>
                                     </div>
                                 </motion.div>
                             ))
                         ) : (
-                            <div className="col-span-full text-center py-20 text-foreground/30 italic">No products in collection yet.</div>
+                            <div className="col-span-full text-center py-20 text-foreground/40">No products in collection yet.</div>
                         )}
                     </div>
                 )}
@@ -130,7 +130,7 @@ export const FeaturedProducts = () => {
                         className="fixed bottom-12 left-1/2 z-[150] bg-primary text-white px-8 py-4 shadow-2xl flex items-center gap-4 border border-accent/20"
                     >
                         <CheckCircle2 className="text-accent" size={18} />
-                        <p className="text-xs font-bold uppercase tracking-widest">Added <span className="text-accent italic">{lastAdded}</span> to cart</p>
+                        <p className="text-sm font-semibold uppercase tracking-widest">Added <span className="text-accent">{lastAdded}</span> to cart</p>
                     </motion.div>
                 )}
             </AnimatePresence>

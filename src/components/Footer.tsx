@@ -9,7 +9,7 @@ export const Footer = () => {
             <div className="container mx-auto px-6">
                 <div className="grid lg:grid-cols-2 gap-24 mb-32 items-center">
                     <div>
-                        <h2 className="text-5xl md:text-7xl font-display mb-8">Ready To Elevate <br /><span className="italic serif">Your Living?</span></h2>
+                        <h2 className="text-5xl md:text-7xl font-display mb-8">Ready To Elevate <br /><span className="font-medium">Your Living?</span></h2>
                         <div className="flex gap-4">
                             <Button size="lg" className="bg-white text-primary hover:bg-accent hover:text-white rounded-none border-none h-16 px-12 text-lg">
                                 Join The Circle
@@ -29,7 +29,7 @@ export const Footer = () => {
                                 <ArrowRight className="group-hover:translate-x-2 transition-transform text-accent" />
                             </button>
                         </form>
-                        <p className="mt-8 text-white/40 text-xs uppercase tracking-widest leading-loose">
+                        <p className="mt-8 text-white/50 text-xs uppercase tracking-widest leading-loose">
                             By subscribing you agree to our privacy policy and consent to receive updates about our products and services.
                         </p>
                     </div>
@@ -51,7 +51,7 @@ export const Footer = () => {
                     </div>
 
                     <div>
-                        <h4 className="font-bold text-[10px] uppercase tracking-[0.3em] text-accent mb-8">Discovery</h4>
+                        <h4 className="font-semibold text-xs uppercase tracking-[0.2em] text-accent mb-8">Discovery</h4>
                         <ul className="space-y-4 text-sm text-white/50">
                             <li><a href="#" className="hover:text-white transition-colors">Our Editions</a></li>
                             <li><a href="#" className="hover:text-white transition-colors">New Drops</a></li>
@@ -61,7 +61,7 @@ export const Footer = () => {
                     </div>
 
                     <div>
-                        <h4 className="font-bold text-[10px] uppercase tracking-[0.3em] text-accent mb-8">Journal</h4>
+                        <h4 className="font-semibold text-xs uppercase tracking-[0.2em] text-accent mb-8">Journal</h4>
                         <ul className="space-y-4 text-sm text-white/50">
                             <li><a href="#" className="hover:text-white transition-colors">Craftsmanship</a></li>
                             <li><a href="#" className="hover:text-white transition-colors">Sustainability</a></li>
@@ -71,7 +71,7 @@ export const Footer = () => {
                     </div>
 
                     <div>
-                        <h4 className="font-bold text-[10px] uppercase tracking-[0.3em] text-accent mb-8">Support</h4>
+                        <h4 className="font-semibold text-xs uppercase tracking-[0.2em] text-accent mb-8">Support</h4>
                         <ul className="space-y-4 text-sm text-white/50">
                             <li><a href="#" className="hover:text-white transition-colors">Shipping</a></li>
                             <li><a href="#" className="hover:text-white transition-colors">Returns</a></li>
@@ -81,7 +81,7 @@ export const Footer = () => {
                     </div>
 
                     <div>
-                        <h4 className="font-bold text-[10px] uppercase tracking-[0.3em] text-accent mb-8">Flagship</h4>
+                        <h4 className="font-semibold text-xs uppercase tracking-[0.2em] text-accent mb-8">Flagship</h4>
                         <p className="text-sm text-white/50 leading-loose">
                             123 Indiranagar, <br />
                             Bangalore, KA 560038 <br />
@@ -91,11 +91,11 @@ export const Footer = () => {
                 </div>
 
                 <div className="flex flex-col md:flex-row justify-between items-center gap-8 border-t border-white/5 pt-12">
-                    <p className="text-[10px] uppercase tracking-widest text-white/20">© 2026 Heeman Furniture. All rights reserved.</p>
+                    <p className="text-xs uppercase tracking-widest text-white/40">© 2026 Heeman Furniture. All rights reserved.</p>
                     <div className="flex gap-12">
-                        <a href="#" className="text-[10px] uppercase tracking-widest text-white/20 hover:text-white transition-colors">Privacy</a>
-                        <a href="#" className="text-[10px] uppercase tracking-widest text-white/20 hover:text-white transition-colors">Terms</a>
-                        <a href="#" className="text-[10px] uppercase tracking-widest text-white/20 hover:text-white transition-colors">Cookies</a>
+                        <a href="#" className="text-xs uppercase tracking-widest text-white/40 hover:text-white transition-colors">Privacy</a>
+                        <a href="#" className="text-xs uppercase tracking-widest text-white/40 hover:text-white transition-colors">Terms</a>
+                        <a href="#" className="text-xs uppercase tracking-widest text-white/40 hover:text-white transition-colors">Cookies</a>
                     </div>
                 </div>
             </div>

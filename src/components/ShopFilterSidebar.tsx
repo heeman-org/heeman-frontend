@@ -61,10 +61,10 @@ export const ShopFilterSidebar = ({
                         <div className="space-y-12">
                             {/* Price Range Selector */}
                             <div className="space-y-6">
-                                <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/40 pb-4 border-b border-foreground/5">Price Horizon</h3>
+                                <h3 className="text-xs font-semibold uppercase tracking-[0.15em] text-foreground/50 pb-4 border-b border-foreground/5">Price Horizon</h3>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="space-y-2">
-                                        <label className="text-[9px] uppercase font-bold text-foreground/30">From ($)</label>
+                                        <label className="text-xs uppercase font-semibold text-foreground/40">From ($)</label>
                                         <input
                                             type="number"
                                             value={priceRange[0]}
@@ -73,7 +73,7 @@ export const ShopFilterSidebar = ({
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-[9px] uppercase font-bold text-foreground/30">To ($)</label>
+                                        <label className="text-xs uppercase font-semibold text-foreground/40">To ($)</label>
                                         <input
                                             type="number"
                                             value={priceRange[1]}
@@ -87,7 +87,7 @@ export const ShopFilterSidebar = ({
                                         <button
                                             key={p}
                                             onClick={() => setPriceRange([0, p])}
-                                            className="px-3 py-1.5 text-[9px] font-bold border border-foreground/10 hover:border-accent hover:text-accent transition-colors"
+                                            className="px-3 py-1.5 text-xs font-semibold border border-foreground/10 hover:border-accent hover:text-accent transition-colors"
                                         >
                                             Under ${p}
                                         </button>
@@ -97,14 +97,14 @@ export const ShopFilterSidebar = ({
 
                             {/* Material Selector */}
                             <div className="space-y-6">
-                                <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/40 pb-4 border-b border-foreground/5">Material Source</h3>
+                                <h3 className="text-xs font-semibold uppercase tracking-[0.15em] text-foreground/50 pb-4 border-b border-foreground/5">Material Source</h3>
                                 <div className="flex flex-wrap gap-2">
                                     {materials.map((mat) => (
                                         <button
                                             key={mat}
                                             onClick={() => setActiveMaterial(mat)}
                                             className={cn(
-                                                "px-4 py-2 text-[10px] font-bold uppercase tracking-widest border transition-all",
+                                                "px-4 py-2 text-xs font-semibold uppercase tracking-widest border transition-all",
                                                 activeMaterial === mat
                                                     ? "bg-primary text-white border-primary"
                                                     : "border-foreground/10 hover:border-foreground/30"
@@ -118,7 +118,7 @@ export const ShopFilterSidebar = ({
 
                             {/* Sorting */}
                             <div className="space-y-6">
-                                <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/40 pb-4 border-b border-foreground/5">Display Hierarchy</h3>
+                                <h3 className="text-xs font-semibold uppercase tracking-[0.15em] text-foreground/50 pb-4 border-b border-foreground/5">Display Hierarchy</h3>
                                 <div className="flex flex-col gap-2">
                                     {[
                                         { id: "newest", label: "Newly Acquired" },
@@ -130,7 +130,7 @@ export const ShopFilterSidebar = ({
                                             key={opt.id}
                                             onClick={() => setSortBy(opt.id as SortOption)}
                                             className={cn(
-                                                "text-left py-3 px-4 text-xs font-bold uppercase tracking-widest transition-all",
+                                                "text-left py-3 px-4 text-sm font-semibold uppercase tracking-widest transition-all",
                                                 sortBy === opt.id ? "bg-primary text-white" : "hover:bg-secondary"
                                             )}
                                         >
@@ -151,7 +151,7 @@ export const ShopFilterSidebar = ({
                                 </Button>
                                 <button
                                     onClick={onReset}
-                                    className="flex items-center justify-center gap-2 text-[10px] font-bold uppercase tracking-widest text-foreground/30 hover:text-primary transition-colors py-4"
+                                    className="flex items-center justify-center gap-2 text-xs font-semibold uppercase tracking-widest text-foreground/40 hover:text-primary transition-colors py-4"
                                 >
                                     <RotateCcw size={14} /> Revert to Default
                                 </button>

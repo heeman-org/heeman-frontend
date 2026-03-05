@@ -47,7 +47,7 @@ export const Hero = () => {
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 0.2 }}
-                        className="text-accent font-bold tracking-[0.2em] uppercase text-[11px] mb-6 block font-sans"
+                        className="text-accent font-semibold tracking-[0.15em] uppercase text-sm mb-6 block font-sans"
                     >
                         {landingConstants.hero.subtitle}
                     </motion.span>
@@ -74,7 +74,7 @@ export const Hero = () => {
 
             {/* Scroll Indicator */}
             <div className="absolute bottom-12 left-1/2 -translate-x-1/2 z-10 hidden lg:flex flex-col items-center gap-4">
-                <span className="text-white/40 text-[10px] uppercase tracking-[0.4em]">{landingConstants.hero.scrollText}</span>
+                <span className="text-white/50 text-xs uppercase tracking-[0.3em]">{landingConstants.hero.scrollText}</span>
                 <div className="w-[1px] h-16 bg-white/20 relative overflow-hidden">
                     <motion.div
                         animate={{ y: ["-100%", "100%"] }}
@@ -87,7 +87,7 @@ export const Hero = () => {
             {/* Social Links sidebar decoration */}
             <div className="absolute right-12 top-1/2 -translate-y-1/2 z-10 hidden xl:flex flex-col gap-8 items-center text-white/30">
                 <div className="w-px h-20 bg-white/10"></div>
-                <span className="[writing-mode:vertical-lr] uppercase tracking-[0.5em] text-[9px] font-bold">{landingConstants.hero.sidebarText}</span>
+                <span className="[writing-mode:vertical-lr] uppercase tracking-[0.3em] text-xs font-semibold">{landingConstants.hero.sidebarText}</span>
                 <div className="w-px h-20 bg-white/10"></div>
             </div>
         </section>

@@ -146,7 +146,7 @@ export default function Cart() {
                     <motion.span
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
-                        className="text-accent font-bold tracking-[0.3em] uppercase text-[10px] mb-6 block"
+                        className="text-accent font-semibold tracking-[0.2em] uppercase text-sm mb-6 block"
                     >
                         Your Selections
                     </motion.span>
@@ -156,9 +156,9 @@ export default function Cart() {
                         transition={{ delay: 0.1 }}
                         className="text-5xl md:text-7xl font-display mb-4"
                     >
-                        Curation <span className="italic serif">Cart.</span>
+                        Curation <span className="font-medium">Cart.</span>
                     </motion.h1>
-                    <p className="text-foreground/40 font-medium">Items in your private collection ({totalItems})</p>
+                    <p className="text-foreground/50 font-medium">Items in your private collection ({totalItems})</p>
                 </div>
 
                 {cart.length === 0 ? (
@@ -173,7 +173,7 @@ export default function Cart() {
                             Explore our curated editions and find the perfect pieces for your sanctuary.
                         </p>
                         <Link to="/shop">
-                            <Button size="lg" className="rounded-none px-12 uppercase tracking-widest text-[11px] font-bold h-14">
+                            <Button size="lg" className="rounded-none px-12 uppercase tracking-widest text-xs font-semibold h-14">
                                 Explore The Shop
                             </Button>
                         </Link>
@@ -203,7 +203,7 @@ export default function Cart() {
                                         <div className="flex-1 flex flex-col justify-between">
                                             <div className="flex justify-between items-start">
                                                 <div>
-                                                    <span className="text-[9px] uppercase tracking-widest font-bold text-foreground/30 mb-2 block">
+                                                    <span className="text-xs uppercase tracking-widest font-semibold text-foreground/40 mb-2 block">
                                                         {item.category}
                                                     </span>
                                                     <Link to={`/shop/${item.id}`} className="hover:text-accent transition-colors">
@@ -235,8 +235,8 @@ export default function Cart() {
                                                     </button>
                                                 </div>
                                                 <div className="text-right">
-                                                    <p className="text-[10px] uppercase tracking-widest font-bold opacity-30 mb-1">Total</p>
-                                                    <span className="text-xl font-display italic text-accent">
+                                                    <p className="text-xs uppercase tracking-widest font-semibold opacity-40 mb-1">Total</p>
+                                                    <span className="text-xl font-display text-accent">
                                                         {formatPrice(parseFloat(item.price.replace(/[$,]/g, "")) * item.quantity)}
                                                     </span>
                                                 </div>
@@ -291,7 +291,7 @@ export default function Cart() {
                                             <Button
                                                 onClick={handleApplyCoupon}
                                                 disabled={isApplyingCoupon || !couponCode.trim()}
-                                                className="h-12 px-8 uppercase tracking-widest text-[10px] font-bold rounded-none whitespace-nowrap"
+                                                className="h-12 px-8 uppercase tracking-widest text-xs font-semibold rounded-none whitespace-nowrap"
                                             >
                                                 {isApplyingCoupon ? <Loader2 className="animate-spin" size={16} /> : "Apply"}
                                             </Button>
@@ -344,10 +344,10 @@ export default function Cart() {
                                 </div>
 
                                 <div className="space-y-4 mb-10 relative z-10">
-                                    <div className="flex items-center gap-4 text-[10px] uppercase tracking-widest opacity-60">
+                                    <div className="flex items-center gap-4 text-xs uppercase tracking-widest opacity-70">
                                         <ShieldCheck size={14} className="text-accent" /> Secure Bespoke Checkout
                                     </div>
-                                    <div className="flex items-center gap-4 text-[10px] uppercase tracking-widest opacity-60">
+                                    <div className="flex items-center gap-4 text-xs uppercase tracking-widest opacity-70">
                                         <Truck size={14} className="text-accent" /> Premium Handling Included
                                     </div>
                                 </div>
@@ -362,7 +362,7 @@ export default function Cart() {
                             </div>
 
                             <div className="mt-8 text-center">
-                                <Link to="/shop" className="text-[10px] font-bold uppercase tracking-widest border-b border-foreground/10 pb-1 hover:text-accent hover:border-accent transition-all">
+                                <Link to="/shop" className="text-xs font-semibold uppercase tracking-widest border-b border-foreground/10 pb-1 hover:text-accent hover:border-accent transition-all">
                                     Continue Curating
                                 </Link>
                             </div>

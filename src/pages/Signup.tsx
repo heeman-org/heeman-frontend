@@ -98,7 +98,7 @@ export default function Signup() {
     };
 
     return (
-        <div className="min-h-screen bg-white flex items-center justify-center p-6 pt-32 font-serif text-primary">
+        <div className="min-h-screen bg-white flex items-center justify-center p-6 pt-32 text-primary">
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -108,7 +108,7 @@ export default function Signup() {
                     <h1 className="text-4xl font-display font-bold tracking-tight mb-3">
                         {step === "details" ? "Join Heeman" : "Verify Identity"}
                     </h1>
-                    <p className="text-primary/60 text-sm italic">
+                    <p className="text-primary/60 text-sm">
                         {step === "details"
                             ? "Establish your profile to start your journey"
                             : `A verification code has been dispatched to ${email}`}
@@ -126,7 +126,7 @@ export default function Signup() {
                             className="space-y-6"
                         >
                             {error && (
-                                <div className="p-3 bg-red-50 text-red-500 text-xs font-semibold uppercase tracking-wider text-center border border-red-100 italic">
+                                <div className="p-3 bg-red-50 text-red-500 text-xs font-semibold uppercase tracking-wider text-center border border-red-100">
                                     {error}
                                 </div>
                             )}
@@ -140,7 +140,7 @@ export default function Signup() {
                                         onChange={(e) => setName(e.target.value)}
                                         placeholder="Full Name"
                                         required
-                                        className="w-full h-14 bg-zinc-50 border-transparent focus:border-accent outline-none px-12 text-sm transition-all duration-300 rounded-none italic"
+                                        className="w-full h-14 bg-zinc-50 border-transparent focus:border-accent outline-none px-12 text-sm transition-all duration-300 rounded-none"
                                     />
                                 </div>
 
@@ -152,7 +152,7 @@ export default function Signup() {
                                         onChange={(e) => setEmail(e.target.value)}
                                         placeholder="Email Address"
                                         required
-                                        className="w-full h-14 bg-zinc-50 border-transparent focus:border-accent outline-none px-12 text-sm transition-all duration-300 rounded-none italic"
+                                        className="w-full h-14 bg-zinc-50 border-transparent focus:border-accent outline-none px-12 text-sm transition-all duration-300 rounded-none"
                                     />
                                 </div>
 
@@ -164,7 +164,7 @@ export default function Signup() {
                                         onChange={(e) => setPassword(e.target.value)}
                                         placeholder="Create Password"
                                         required
-                                        className="w-full h-14 bg-zinc-50 border-transparent focus:border-accent outline-none px-12 text-sm transition-all duration-300 rounded-none italic"
+                                        className="w-full h-14 bg-zinc-50 border-transparent focus:border-accent outline-none px-12 text-sm transition-all duration-300 rounded-none"
                                     />
                                 </div>
                             </div>
@@ -193,7 +193,7 @@ export default function Signup() {
                             className="space-y-6"
                         >
                             {error && (
-                                <div className="p-3 bg-red-50 text-red-500 text-xs font-semibold uppercase tracking-wider text-center border border-red-100 italic">
+                                <div className="p-3 bg-red-50 text-red-500 text-xs font-semibold uppercase tracking-wider text-center border border-red-100">
                                     {error}
                                 </div>
                             )}
@@ -207,7 +207,7 @@ export default function Signup() {
                                     placeholder="Verification Code"
                                     required
                                     maxLength={6}
-                                    className="w-full h-14 bg-zinc-50 border-transparent focus:border-accent outline-none px-12 text-sm transition-all duration-300 rounded-none tracking-[0.5em] font-bold text-center italic"
+                                    className="w-full h-14 bg-zinc-50 border-transparent focus:border-accent outline-none px-12 text-sm transition-all duration-300 rounded-none tracking-[0.5em] font-bold text-center"
                                 />
                             </div>
 
@@ -228,7 +228,7 @@ export default function Signup() {
                             <button
                                 type="button"
                                 onClick={handleBackToDetails}
-                                className="w-full text-center text-xs font-bold uppercase tracking-widest text-primary/40 hover:text-accent transition-colors flex items-center justify-center gap-2"
+                                className="w-full text-center text-xs font-semibold uppercase tracking-widest text-primary/50 hover:text-accent transition-colors flex items-center justify-center gap-2"
                             >
                                 <ArrowLeft size={14} />
                                 Modify Profile Details
@@ -238,7 +238,7 @@ export default function Signup() {
                 </AnimatePresence>
 
                 <div className="mt-8 text-center border-t border-zinc-100 pt-8">
-                    <p className="text-sm text-primary/50">
+                    <p className="text-sm text-primary/60">
                         Already have an account?{" "}
                         <Link to="/login" className="text-accent font-bold hover:underline transition-all underline-offset-4">
                             Proceed to Login

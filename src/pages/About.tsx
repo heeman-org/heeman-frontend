@@ -44,7 +44,7 @@ export default function About() {
                         transition={{ delay: 0.1 }}
                         className="text-5xl md:text-7xl font-display mb-12 leading-tight"
                     >
-                        {aboutConstants.hero.titleLine1} <br /> <span className="italic">{aboutConstants.hero.titleLine2}</span>
+                        {aboutConstants.hero.titleLine1} <br /> <span className="font-medium">{aboutConstants.hero.titleLine2}</span>
                     </motion.h1>
                     <motion.p
                         initial={{ opacity: 0, y: 20 }}
@@ -87,7 +87,7 @@ export default function About() {
                         </div>
                         <div className="bg-primary p-12 flex flex-col justify-center text-white">
                             <h3 className="text-3xl font-display mb-6">{aboutConstants.imageSpread.title}</h3>
-                            <p className="text-white/60 leading-relaxed">
+                            <p className="text-white/70 leading-relaxed">
                                 {aboutConstants.imageSpread.description}
                             </p>
                         </div>
@@ -110,7 +110,7 @@ export default function About() {
                                     <div key={i} className="space-y-4">
                                         <Icon className="text-accent" size={32} />
                                         <h4 className="text-xl font-bold">{item.title}</h4>
-                                        <p className="text-foreground/80 text-sm leading-relaxed">
+                                        <p className="text-foreground/80 text-base leading-relaxed">
                                             {item.description}
                                         </p>
                                     </div>
@@ -127,7 +127,7 @@ export default function About() {
                     {aboutConstants.stats.map((stat: any, i: number) => (
                         <div key={i} className="text-center">
                             <h4 className="text-5xl font-display mb-2">{stat.value}</h4>
-                            <p className="text-[10px] uppercase tracking-[0.3em] font-bold text-foreground/60">{stat.label}</p>
+                            <p className="text-xs uppercase tracking-[0.2em] font-semibold text-foreground/60">{stat.label}</p>
                         </div>
                     ))}
                 </div>

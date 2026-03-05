@@ -60,8 +60,8 @@ export const AboutUs = () => {
                     viewport={{ once: true }}
                     transition={{ duration: 0.8 }}
                 >
-                    <h2 className="text-accent font-medium tracking-[0.3em] uppercase text-xs mb-6">{landingConstants.aboutUs.subtitle}</h2>
-                    <h2 className="text-4xl md:text-5xl font-display mb-8 leading-tight">{landingConstants.aboutUs.titleLine1} <br /><span className="italic">{landingConstants.aboutUs.titleLine2}</span></h2>
+                    <h2 className="text-accent font-medium tracking-[0.2em] uppercase text-sm mb-6">{landingConstants.aboutUs.subtitle}</h2>
+                    <h2 className="text-4xl md:text-5xl font-display mb-8 leading-tight">{landingConstants.aboutUs.titleLine1} <br /><span className="font-medium">{landingConstants.aboutUs.titleLine2}</span></h2>
                     <div className="space-y-6 text-foreground/70 leading-relaxed mb-10">
                         {landingConstants.aboutUs.paragraphs.map((p: string, i: number) => (
                             <p key={i}>{p}</p>

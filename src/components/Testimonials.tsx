@@ -60,14 +60,14 @@ export const Testimonials = () => {
                                     <Star key={j} size={14} className="fill-accent text-accent" />
                                 ))}
                             </div>
-                            <p className="text-foreground/70 leading-relaxed mb-8 italic">
+                            <p className="text-foreground/70 leading-relaxed mb-8">
                                 "{rev.content}"
                             </p>
                             <div className="flex items-center gap-4">
                                 <img src={rev.image} alt={rev.name} className="w-12 h-12 rounded-full object-cover" />
                                 <div>
                                     <h4 className="font-bold text-sm tracking-tight">{rev.name}</h4>
-                                    <p className="text-[10px] text-foreground/40 uppercase tracking-widest font-medium">{rev.role}</p>
+                                    <p className="text-xs text-foreground/50 uppercase tracking-widest font-medium">{rev.role}</p>
                                 </div>
                             </div>
                         </motion.div>

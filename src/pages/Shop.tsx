@@ -106,7 +106,7 @@ export default function Shop() {
                     <motion.span
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
-                        className="text-accent font-bold tracking-[0.3em] uppercase text-[12px] mb-6 block"
+                        className="text-accent font-semibold tracking-[0.2em] uppercase text-sm mb-6 block"
                     >
                         Heeman Collections
                     </motion.span>
@@ -117,7 +117,7 @@ export default function Shop() {
                         className="text-5xl md:text-7xl font-display mb-8"
                     >
                         Every Piece Tells <br />
-                        <span className="italic serif">A Unique Story.</span>
+                        <span className="font-medium">A Unique Story.</span>
                     </motion.h1>
                 </div>
 
@@ -134,13 +134,13 @@ export default function Shop() {
 
                 {/* Sub-Actions & Result Count */}
                 <div className="flex justify-between items-center mb-12">
-                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/30">
+                    <p className="text-xs font-semibold uppercase tracking-[0.15em] text-foreground/40">
                         Exhibiting <span className="text-primary">{filteredAndSortedProducts.length}</span> Rare Pieces
                     </p>
                     {(activeCategory !== "All" || activeMaterial !== "All" || searchQuery || priceRange[0] > 0 || priceRange[1] < 10000) && (
                         <button
                             onClick={resetFilters}
-                            className="text-[10px] font-bold uppercase tracking-[0.2em] text-accent hover:underline flex items-center gap-2"
+                            className="text-xs font-semibold uppercase tracking-[0.15em] text-accent hover:underline flex items-center gap-2"
                         >
                             <X size={12} /> Dissolve Filters
                         </button>
@@ -171,7 +171,7 @@ export default function Shop() {
 
                                     {/* Badge */}
                                     <div className="absolute top-6 left-6 pointer-events-none">
-                                        <span className="bg-white/95 backdrop-blur-md px-4 py-1.5 text-[12px] font-bold uppercase tracking-[0.2em] text-primary shadow-sm border border-black/5">
+                                        <span className="bg-white/95 backdrop-blur-md px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.15em] text-primary shadow-sm border border-black/5">
                                             {p.tag}
                                         </span>
                                     </div>
@@ -217,10 +217,10 @@ export default function Shop() {
 
                                 <div className="flex flex-col">
                                     <div className="flex justify-between items-start mb-2">
-                                        <span className="text-[11px] uppercase tracking-[0.2em] text-foreground/30 font-bold">{p.category}</span>
+                                        <span className="text-xs uppercase tracking-[0.15em] text-foreground/40 font-semibold">{p.category}</span>
                                         <div className="flex items-center gap-1">
                                             <Star size={10} className="fill-accent text-accent" />
-                                            <span className="text-[11px] font-bold">{p.rating}</span>
+                                            <span className="text-xs font-semibold">{p.rating}</span>
                                         </div>
                                     </div>
 
@@ -229,8 +229,8 @@ export default function Shop() {
                                     </Link>
 
                                     <div className="flex justify-between items-end">
-                                        <span className="text-xl font-display italic text-accent">{p.price}</span>
-                                        <Link to={`/shop/${p.id}`} className="group/link flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-foreground/40 hover:text-primary transition-colors">
+                                        <span className="text-xl font-display text-accent">{p.price}</span>
+                                        <Link to={`/shop/${p.id}`} className="group/link flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-foreground/50 hover:text-primary transition-colors">
                                             Explore Details <ArrowRight size={14} className="group-hover/link:translate-x-1 transition-transform" />
                                         </Link>
                                     </div>
@@ -243,8 +243,8 @@ export default function Shop() {
                 {filteredAndSortedProducts.length === 0 && (
                     <div className="py-32 flex flex-col items-center justify-center border-y border-foreground/5 bg-secondary/10">
                         <Filter className="size-12 text-foreground/10 mb-6" />
-                        <h3 className="text-3xl font-display mb-4 italic">No echoes found.</h3>
-                        <p className="text-foreground/40 mb-12 max-w-xs text-center text-sm leading-relaxed">
+                        <h3 className="text-3xl font-display mb-4">No echoes found.</h3>
+                        <p className="text-foreground/50 mb-12 max-w-xs text-center text-base leading-relaxed">
                             Your refinements were too specific for our current collection. Try relaxing your parameters.
                         </p>
                         <Button onClick={resetFilters} variant="outline" className="px-12">
@@ -264,7 +264,7 @@ export default function Shop() {
                         className="fixed bottom-12 left-1/2 z-[150] bg-primary text-white px-8 py-4 shadow-2xl flex items-center gap-4 border border-accent/20"
                     >
                         <CheckCircle2 className="text-accent" size={18} />
-                        <p className="text-xs font-bold uppercase tracking-widest">Added <span className="text-accent italic">{lastAdded}</span> to collection</p>
+                        <p className="text-sm font-semibold uppercase tracking-widest">Added <span className="text-accent">{lastAdded}</span> to collection</p>
                     </motion.div>
                 )}
             </AnimatePresence>

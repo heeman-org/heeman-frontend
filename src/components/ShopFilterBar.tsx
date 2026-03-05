@@ -30,7 +30,7 @@ export const ShopFilterBar = ({
                         key={cat}
                         onClick={() => setActiveCategory(cat)}
                         className={cn(
-                            "px-6 py-2.5 text-[11px] font-bold uppercase tracking-[0.1em] transition-all duration-300 border",
+                            "px-6 py-2.5 text-[13px] font-semibold uppercase tracking-[0.1em] transition-all duration-300 border",
                             activeCategory === cat
                                 ? "bg-primary text-white border-primary"
                                 : "bg-transparent text-foreground/40 border-foreground/10 hover:border-foreground/30"

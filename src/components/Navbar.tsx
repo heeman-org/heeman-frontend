@@ -75,7 +75,7 @@ export const Navbar = () => {
                                 key={link.name}
                                 to={link.href}
                                 className={cn(
-                                    "relative text-[11px] font-bold uppercase tracking-[0.2em] transition-colors duration-300 group overflow-hidden",
+                                    "relative text-[13px] font-semibold uppercase tracking-[0.15em] transition-colors duration-300 group overflow-hidden",
                                     isDarkTheme ? "text-primary/70 hover:text-primary" : "text-white/70 hover:text-white"
                                 )}
                             >
@@ -117,19 +117,19 @@ export const Navbar = () => {
                                             <div className="bg-white border shadow-xl p-2 flex flex-col gap-1">
                                                 {!isAuthenticated ? (
                                                     <>
-                                                        <Link to="/login" className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest hover:bg-zinc-50 transition-colors">Login</Link>
-                                                        <Link to="/signup" className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest hover:bg-zinc-50 transition-colors">Sign Up</Link>
+                                                        <Link to="/login" className="px-4 py-2 text-xs font-semibold uppercase tracking-widest hover:bg-zinc-50 transition-colors">Login</Link>
+                                                        <Link to="/signup" className="px-4 py-2 text-xs font-semibold uppercase tracking-widest hover:bg-zinc-50 transition-colors">Sign Up</Link>
                                                     </>
                                                 ) : (
                                                     <>
                                                         <div className="px-4 py-2 border-b mb-1">
-                                                            <p className="text-[10px] font-bold uppercase tracking-widest text-accent">Profile</p>
-                                                            <p className="text-[9px] text-primary/50 truncate italic font-medium">{session.user.email}</p>
+                                                            <p className="text-xs font-semibold uppercase tracking-widest text-accent">Profile</p>
+                                                            <p className="text-xs text-primary/60 truncate font-medium">{session.user.email}</p>
                                                         </div>
-                                                        <Link to="/orders" className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest hover:bg-zinc-50 transition-colors">My Orders</Link>
+                                                        <Link to="/orders" className="px-4 py-2 text-xs font-semibold uppercase tracking-widest hover:bg-zinc-50 transition-colors">My Orders</Link>
                                                         <button
                                                             onClick={handleLogout}
-                                                            className="text-left px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-red-500 hover:bg-zinc-50 transition-colors"
+                                                            className="text-left px-4 py-2 text-xs font-semibold uppercase tracking-widest text-red-500 hover:bg-zinc-50 transition-colors"
                                                         >
                                                             Logout
                                                         </button>
@@ -149,7 +149,7 @@ export const Navbar = () => {
                                         <motion.span
                                             initial={{ scale: 0 }}
                                             animate={{ scale: 1 }}
-                                            className="absolute top-1 right-1 w-3.5 h-3.5 bg-accent rounded-full border border-white text-[7px] flex items-center justify-center font-bold text-white shadow-sm"
+                                            className="absolute top-1 right-1 w-3.5 h-3.5 bg-accent rounded-full border border-white text-[9px] flex items-center justify-center font-bold text-white shadow-sm"
                                         >
                                             {totalItems}
                                         </motion.span>
@@ -170,7 +170,7 @@ export const Navbar = () => {
                         <a href="/catalog.pdf" target="_blank" rel="noopener noreferrer">
                             <Button
                                 className={cn(
-                                    "hidden md:flex ml-2 rounded-none px-6 font-bold tracking-widest text-[10px] uppercase transition-all duration-300",
+                                    "hidden md:flex ml-2 rounded-none px-6 font-semibold tracking-widest text-xs uppercase transition-all duration-300",
                                     isDarkTheme
                                         ? "bg-primary text-white hover:bg-accent"
                                         : "bg-white text-primary hover:bg-accent hover:text-white"

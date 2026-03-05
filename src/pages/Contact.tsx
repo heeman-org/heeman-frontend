@@ -126,13 +126,13 @@ export default function Contact() {
                         transition={{ delay: 0.1 }}
                         className="text-5xl md:text-7xl font-display mb-8"
                     >
-                        {contactConstants.header.titleLine1} <br /> <span className="italic serif">{contactConstants.header.titleLine2}</span>
+                        {contactConstants.header.titleLine1} <br /> <span className="font-medium">{contactConstants.header.titleLine2}</span>
                     </motion.h1>
                     <motion.p
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.2 }}
-                        className="text-lg text-foreground/50 max-w-lg leading-relaxed"
+                        className="text-lg text-foreground/60 max-w-lg leading-relaxed"
                     >
                         {contactConstants.header.description}
                     </motion.p>
@@ -162,7 +162,7 @@ export default function Contact() {
 
                             <div className="grid md:grid-cols-2 gap-8">
                                 <div className="space-y-2">
-                                    <label className="text-[10px] uppercase tracking-widest font-bold opacity-40">{contactConstants.form.fields.fullName.label}</label>
+                                    <label className="text-xs uppercase tracking-widest font-semibold opacity-50">{contactConstants.form.fields.fullName.label}</label>
                                     <input
                                         required
                                         type="text"
@@ -174,7 +174,7 @@ export default function Contact() {
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="text-[10px] uppercase tracking-widest font-bold opacity-40">{contactConstants.form.fields.email.label}</label>
+                                    <label className="text-xs uppercase tracking-widest font-semibold opacity-50">{contactConstants.form.fields.email.label}</label>
                                     <input
                                         required
                                         type="email"
@@ -188,7 +188,7 @@ export default function Contact() {
                             </div>
 
                             <div className="space-y-2">
-                                <label className="text-[10px] uppercase tracking-widest font-bold opacity-40">{contactConstants.form.fields.subject.label}</label>
+                                <label className="text-xs uppercase tracking-widest font-semibold opacity-50">{contactConstants.form.fields.subject.label}</label>
                                 <select
                                     value={formData.subject}
                                     onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
@@ -202,7 +202,7 @@ export default function Contact() {
                             </div>
 
                             <div className="space-y-2">
-                                <label className="text-[10px] uppercase tracking-widest font-bold opacity-40">{contactConstants.form.fields.message.label}</label>
+                                <label className="text-xs uppercase tracking-widest font-semibold opacity-50">{contactConstants.form.fields.message.label}</label>
                                 <textarea
                                     required
                                     rows={4}

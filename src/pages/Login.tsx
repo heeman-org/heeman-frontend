@@ -51,7 +51,7 @@ export default function Login() {
     };
 
     return (
-        <div className="min-h-screen bg-white flex items-center justify-center p-6 pt-32 font-serif text-primary">
+        <div className="min-h-screen bg-white flex items-center justify-center p-6 pt-32 text-primary">
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -59,12 +59,12 @@ export default function Login() {
             >
                 <div className="text-center mb-10">
                     <h1 className="text-4xl font-display font-bold tracking-tight mb-3">Welcome Back</h1>
-                    <p className="text-primary/60 text-sm italic">Enter your credentials to access your profile</p>
+                    <p className="text-primary/60 text-sm">Enter your credentials to access your profile</p>
                 </div>
 
                 <form onSubmit={handleLogin} className="space-y-6">
                     {error && (
-                        <div className={`p-3 text-xs font-semibold uppercase tracking-wider text-center border italic ${error.includes("Redirecting")
+                        <div className={`p-3 text-xs font-semibold uppercase tracking-wider text-center border ${error.includes("Redirecting")
                             ? "bg-amber-50 text-amber-600 border-amber-100"
                             : "bg-red-50 text-red-500 border-red-100"
                             }`}>
@@ -81,7 +81,7 @@ export default function Login() {
                                 onChange={(e) => setEmail(e.target.value)}
                                 placeholder="Email Address"
                                 required
-                                className="w-full h-14 bg-zinc-50 border-transparent focus:border-accent outline-none px-12 text-sm transition-all duration-300 rounded-none italic"
+                                className="w-full h-14 bg-zinc-50 border-transparent focus:border-accent outline-none px-12 text-sm transition-all duration-300 rounded-none"
                             />
                         </div>
 
@@ -93,7 +93,7 @@ export default function Login() {
                                 onChange={(e) => setPassword(e.target.value)}
                                 placeholder="Password"
                                 required
-                                className="w-full h-14 bg-zinc-50 border-transparent focus:border-accent outline-none px-12 text-sm transition-all duration-300 rounded-none italic"
+                                className="w-full h-14 bg-zinc-50 border-transparent focus:border-accent outline-none px-12 text-sm transition-all duration-300 rounded-none"
                             />
                         </div>
                     </div>
@@ -114,7 +114,7 @@ export default function Login() {
                 </form>
 
                 <div className="mt-8 text-center border-t border-zinc-100 pt-8">
-                    <p className="text-sm text-primary/50">
+                    <p className="text-sm text-primary/60">
                         Don't have an account?{" "}
                         <Link to="/signup" className="text-accent font-bold hover:underline transition-all underline-offset-4">
                             Establish Profile

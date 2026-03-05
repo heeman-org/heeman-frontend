@@ -34,10 +34,10 @@ export const Process = () => {
             <div className="container mx-auto px-6">
                 <div className="flex flex-col md:flex-row justify-between items-end mb-20 gap-8">
                     <div className="max-w-xl">
-                        <h2 className="text-accent font-medium tracking-[0.3em] uppercase text-xs mb-6">{landingConstants.process.subtitle}</h2>
-                        <h2 className="text-4xl md:text-5xl font-display leading-tight italic">{landingConstants.process.title}</h2>
+                        <h2 className="text-accent font-medium tracking-[0.2em] uppercase text-sm mb-6">{landingConstants.process.subtitle}</h2>
+                        <h2 className="text-4xl md:text-5xl font-display leading-tight">{landingConstants.process.title}</h2>
                     </div>
-                    <p className="max-w-xs text-white/50 text-sm leading-relaxed mb-2">
+                    <p className="max-w-xs text-white/60 text-base leading-relaxed mb-2">
                         {landingConstants.process.description}
                     </p>
                 </div>
@@ -56,7 +56,7 @@ export const Process = () => {
                                 {step.num}
                             </div>
                             <h3 className="text-xl font-display mb-4">{step.title}</h3>
-                            <p className="text-white/40 text-sm leading-relaxed group-hover:text-white/60 transition-colors">
+                            <p className="text-white/50 text-base leading-relaxed group-hover:text-white/70 transition-colors">
                                 {step.desc}
                             </p>
                         </motion.div>
