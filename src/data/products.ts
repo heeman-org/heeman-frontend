@@ -17,6 +17,7 @@ export interface Product {
         weight: string;
     };
     features: string[];
+    isTopProduct?: boolean;
 }
 
 // No seed data - fetching from backend

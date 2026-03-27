@@ -27,7 +27,8 @@ export function useProducts() {
                         finish: item.styleAndPatterns || "Standard Finish",
                         weight: item.weight || "0 lbs"
                     },
-                    features: item.specialFeatures || item.includedComponents || []
+                    features: item.specialFeatures || item.includedComponents || [],
+                    isTopProduct: item.isTopProduct || false
                 }));
                 setProducts(mappedProducts);
                 setLoading(false);

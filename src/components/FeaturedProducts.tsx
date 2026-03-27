@@ -14,6 +14,8 @@ export const FeaturedProducts = () => {
     const [lastAdded, setLastAdded] = useState<string | null>(null);
     const { landingConstants, loading: constantsLoading } = useConstants();
 
+    const displayProducts = products.filter(p => p.isTopProduct);
+
     if (constantsLoading || !landingConstants) return null;
 
     const handleQuickAdd = (p: Product, e: React.MouseEvent) => {
@@ -39,8 +41,8 @@ export const FeaturedProducts = () => {
                     <FeaturedProductSkeleton count={4} />
                 ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                        {products.length > 0 ? (
-                            products.slice(0, 4).map((p, i) => (
+                        {displayProducts.length > 0 ? (
+                            displayProducts.slice(0, 8).map((p, i) => (
                                 <motion.div
                                     key={i}
                                     initial={{ opacity: 0, y: 20 }}
