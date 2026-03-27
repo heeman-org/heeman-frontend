@@ -1,6 +1,6 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import {
     ArrowRight, Star,
     ShoppingBag, CheckCircle2, X, Filter, Check
@@ -16,14 +16,32 @@ import { ShopGridSkeleton } from "../components/ProductGridSkeleton";
 
 export default function Shop() {
     const { products, loading } = useProducts();
-    const [activeCategory, setActiveCategory] = useState("All");
-    const [activeMaterial, setActiveMaterial] = useState("All");
-    const [searchQuery, setSearchQuery] = useState("");
-    const [priceRange, setPriceRange] = useState<[number, number]>([0, 10000]);
-    const [sortBy, setSortBy] = useState<SortOption>("newest");
+    const [searchParams, setSearchParams] = useSearchParams();
+    
+    const [activeCategory, setActiveCategory] = useState(() => searchParams.get("category") || "All");
+    const [activeMaterial, setActiveMaterial] = useState(() => searchParams.get("material") || "All");
+    const [searchQuery, setSearchQuery] = useState(() => searchParams.get("search") || "");
+    const [priceRange, setPriceRange] = useState<[number, number]>(() => [
+        searchParams.get("minPrice") ? Number(searchParams.get("minPrice")) : 0,
+        searchParams.get("maxPrice") ? Number(searchParams.get("maxPrice")) : 10000
+    ]);
+    const [sortBy, setSortBy] = useState<SortOption>(() => (searchParams.get("sort") as SortOption) || "newest");
+    
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [lastAdded, setLastAdded] = useState<string | null>(null);
     const { addToCart } = useCart();
+
+    useEffect(() => {
+        const params = new URLSearchParams();
+        if (activeCategory !== "All") params.set("category", activeCategory);
+        if (activeMaterial !== "All") params.set("material", activeMaterial);
+        if (searchQuery) params.set("search", searchQuery);
+        if (priceRange[0] !== 0) params.set("minPrice", priceRange[0].toString());
+        if (priceRange[1] !== 10000) params.set("maxPrice", priceRange[1].toString());
+        if (sortBy !== "newest") params.set("sort", sortBy);
+        
+        setSearchParams(params, { replace: true });
+    }, [activeCategory, activeMaterial, searchQuery, priceRange, sortBy, setSearchParams]);
 
     // Reset filters
     const resetFilters = () => {

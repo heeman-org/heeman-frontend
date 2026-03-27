@@ -60,7 +60,7 @@ export const landingConstants = {
             { name: "Minimalist Pendant", price: "$420", tag: "Luxury", img: "https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&q=80&w=800", rating: 4.7 },
             { name: "Walnut Coffee Table", price: "$890", tag: "Artisan", img: "https://images.unsplash.com/photo-1533090161767-e6ffed986c88?auto=format&fit=crop&q=80&w=800", rating: 4.9 }
         ],
-        viewAllButton: "View All Series"
+        viewAllButton: "View All Products"
     },
     testimonials: {
         title: "Voices Of Satisfaction",

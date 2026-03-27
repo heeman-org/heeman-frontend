@@ -2,11 +2,13 @@ import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { useConstants } from "../context/ConstantsContext";
 import { Skeleton } from "./ui/Skeleton";
+import { useCategories } from "../hooks/useCategories";
 
 export const Categories = () => {
-    const { landingConstants, loading } = useConstants();
+    const { landingConstants, loading: constantsLoading } = useConstants();
+    const { categories, loading: categoriesLoading } = useCategories();
 
-    if (loading || !landingConstants) return (
+    if (constantsLoading || categoriesLoading || !landingConstants) return (
         <section className="py-24 container mx-auto px-6">
             <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
                 <div className="max-w-xl w-full">
@@ -37,21 +39,22 @@ export const Categories = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {landingConstants.categories.items.map((cat: any, i: number) => (
+                {categories.map((cat: any, i: number) => (
                     <motion.div
-                        key={i}
+                        key={cat.id || i}
+                        onClick={() => window.location.href = `/shop?category=${encodeURIComponent(cat.name)}`}
                         whileHover={{ scale: 0.98 }}
                         className="group relative aspect-[3/4] overflow-hidden cursor-pointer bg-secondary"
                     >
                         <img
-                            src={cat.img}
-                            alt={cat.title}
+                            src={cat.image || landingConstants.categories.items[i % landingConstants.categories.items.length].img}
+                            alt={cat.name}
                             className="w-full h-full object-cover grayscale-[0.5] group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700"
                         />
                         <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors"></div>
                         <div className="absolute bottom-10 left-10 right-10 flex flex-col items-start translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                            <span className="text-white/70 text-xs uppercase tracking-[0.2em] mb-2">{cat.count} Pieces</span>
-                            <h3 className="text-2xl font-display text-white mb-6 underline underline-offset-8 decoration-white/0 group-hover:decoration-accent transition-all animate-in fade-in slide-in-from-bottom-2">{cat.title}</h3>
+                            <span className="text-white/70 text-xs uppercase tracking-[0.2em] mb-2">{cat._count?.products || 0} Pieces</span>
+                            <h3 className="text-2xl font-display text-white mb-6 underline underline-offset-8 decoration-white/0 group-hover:decoration-accent transition-all animate-in fade-in slide-in-from-bottom-2">{cat.name}</h3>
                             <div className="w-10 h-10 rounded-full border border-white/30 flex items-center justify-center text-white group-hover:bg-accent group-hover:border-accent transition-all overflow-hidden">
                                 <ArrowRight size={16} />
                             </div>

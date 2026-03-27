@@ -14,7 +14,7 @@ export function useProducts() {
                     id: item.id,
                     name: item.name,
                     price: `$${item.price.toLocaleString()}`,
-                    category: item.tags?.[0] || item.series || "General",
+                    category: item.category?.name || "General",
                     tag: item.tags?.[1] || "New",
                     img: item.images?.[0]?.url || "https://images.unsplash.com/photo-1540518614846-7eded433c457?auto=format&fit=crop&q=80&w=1200",
                     gallery: item.images?.map((img: any) => img.url) || [],
