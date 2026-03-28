@@ -6,6 +6,7 @@ import { Button } from "../components/ui/Button";
 import { useConstants } from "../context/ConstantsContext";
 import { authClient } from "../lib/auth-client";
 import { Skeleton } from "../components/ui/Skeleton";
+import { InquiryModal } from "../components/InquiryModal";
 
 export default function Contact() {
     const { data: session, isPending } = authClient.useSession();
@@ -24,13 +25,7 @@ export default function Contact() {
     const [success, setSuccess] = useState(false);
     const [error, setError] = useState("");
 
-    // Custom enquiry form state
-    const [enquiryData, setEnquiryData] = useState({ name: "", email: "", phone: "", message: "" });
-    const [enquiryImages, setEnquiryImages] = useState<File[]>([]);
-    const [enquiryLoading, setEnquiryLoading] = useState(false);
-    const [enquirySuccess, setEnquirySuccess] = useState(false);
-    const [enquiryError, setEnquiryError] = useState("");
-    const fileInputRef = useRef<HTMLInputElement>(null);
+    const [showVerifyModal, setShowVerifyModal] = useState(false);
 
     useEffect(() => {
         if (contactConstants && !formData.subject) {
@@ -51,11 +46,6 @@ export default function Contact() {
     useEffect(() => {
         if (session?.user) {
             setFormData(prev => ({
-                ...prev,
-                name: session.user.name || "",
-                email: session.user.email || ""
-            }));
-            setEnquiryData(prev => ({
                 ...prev,
                 name: session.user.name || "",
                 email: session.user.email || ""
@@ -112,55 +102,37 @@ export default function Contact() {
         }
     };
 
-    const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const files = Array.from(e.target.files || []);
-        setEnquiryImages(prev => {
-            const combined = [...prev, ...files];
-            return combined.slice(0, 5); // max 5 images
-        });
-        // Reset input so same file can be re-selected if removed
-        if (fileInputRef.current) fileInputRef.current.value = "";
-    };
-
-    const removeImage = (index: number) => {
-        setEnquiryImages(prev => prev.filter((_, i) => i !== index));
-    };
-
-    const handleEnquirySubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!enquiryData.name || !enquiryData.email || !enquiryData.message) {
-            setEnquiryError("Please fill out all required fields.");
+    const handleEnquiryCtaClick = () => {
+        if (!session?.user) {
+            navigate("/login", { state: { message: "Please log in to submit a custom order enquiry." } });
             return;
         }
-        setEnquiryLoading(true);
-        setEnquiryError("");
-        setEnquirySuccess(false);
-
-        try {
-            const form = new FormData();
-            form.append("name", enquiryData.name);
-            form.append("email", enquiryData.email);
-            form.append("phone", enquiryData.phone);
-            form.append("message", enquiryData.message);
-            enquiryImages.forEach(img => form.append("images", img));
-
-            const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/enquiry`, {
-                method: "POST",
-                body: form,
+        const stored = sessionStorage.getItem(`enquiry_verified_${session.user.email}`);
+        if (stored) {
+            const { phone } = JSON.parse(stored);
+            navigate("/enquiry", {
+                state: {
+                    verified: true,
+                    phone,
+                    name: session.user.name || "",
+                    email: session.user.email,
+                },
             });
-            const data = await res.json();
-            if (data.success) {
-                setEnquirySuccess(true);
-                setEnquiryData({ name: session?.user?.name || "", email: session?.user?.email || "", phone: "", message: "" });
-                setEnquiryImages([]);
-            } else {
-                throw new Error(data.error || "Failed to submit enquiry.");
-            }
-        } catch (err: any) {
-            setEnquiryError(err.message || "Failed to submit. Please try again.");
-        } finally {
-            setEnquiryLoading(false);
+            return;
         }
+        setShowVerifyModal(true);
+    };
+
+    const handleVerified = (phone: string) => {
+        setShowVerifyModal(false);
+        navigate("/enquiry", {
+            state: {
+                verified: true,
+                phone,
+                name: session?.user?.name || "",
+                email: session?.user?.email || "",
+            },
+        });
     };
 
     if (isPending || constantsLoading || !contactConstants) {
@@ -360,182 +332,68 @@ export default function Contact() {
                 </div>
             </section>
 
-            {/* Custom Enquiry Section */}
+            {/* Custom Enquiry CTA Section */}
             <section ref={enquirySectionRef} className="container mx-auto px-6 mt-32" id="custom-enquiry">
-                <div className="max-w-2xl mb-16">
-                    <motion.span
-                        initial={{ opacity: 0, x: -20 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                        className="text-accent font-bold tracking-[0.3em] uppercase text-sm mb-6 block"
-                    >
-                        Custom Orders
-                    </motion.span>
-                    <motion.h2
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: 0.1 }}
-                        className="text-4xl md:text-6xl font-display mb-6"
-                    >
-                        Enquiry Now
-                    </motion.h2>
-                    <motion.p
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: 0.2 }}
-                        className="text-lg text-foreground/60 leading-relaxed"
-                    >
-                        Share your custom product request. Upload reference images to help us understand exactly what you want.
-                    </motion.p>
-                </div>
-
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    className="bg-secondary/30 p-12 lg:p-16 border border-foreground/5 max-w-4xl"
+                    className="bg-secondary/30 border border-foreground/5 p-12 lg:p-16 max-w-4xl"
                 >
-                    <form onSubmit={handleEnquirySubmit} className="space-y-8">
-                        {enquirySuccess && (
-                            <div className="bg-green-500/10 text-green-700 dark:text-green-400 p-4 font-medium text-sm border border-green-500/20 flex items-center gap-3">
-                                <LucideIcons.CheckCircle2 size={18} />
-                                Your enquiry has been submitted! We'll get back to you shortly.
-                            </div>
-                        )}
-                        {enquiryError && (
-                            <div className="bg-red-500/10 text-red-700 dark:text-red-400 p-4 font-medium text-sm border border-red-500/20">
-                                {enquiryError}
-                            </div>
-                        )}
-
-                        <div className="grid md:grid-cols-2 gap-8">
-                            <div className="space-y-2">
-                                <label className="text-xs uppercase tracking-widest font-semibold opacity-50">Full Name *</label>
-                                <input
-                                    required
-                                    type="text"
-                                    placeholder="Your full name"
-                                    value={enquiryData.name}
-                                    onChange={e => setEnquiryData({ ...enquiryData, name: e.target.value })}
-                                    readOnly={!!session?.user}
-                                    className={`w-full bg-transparent border-b border-foreground/10 py-3 outline-none focus:border-accent transition-colors ${session?.user ? "opacity-70 cursor-not-allowed" : ""}`}
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <label className="text-xs uppercase tracking-widest font-semibold opacity-50">Email Address *</label>
-                                <input
-                                    required
-                                    type="email"
-                                    placeholder="your@email.com"
-                                    value={enquiryData.email}
-                                    onChange={e => setEnquiryData({ ...enquiryData, email: e.target.value })}
-                                    readOnly={!!session?.user}
-                                    className={`w-full bg-transparent border-b border-foreground/10 py-3 outline-none focus:border-accent transition-colors ${session?.user ? "opacity-70 cursor-not-allowed" : ""}`}
-                                />
-                            </div>
+                    <div className="flex flex-col lg:flex-row lg:items-center gap-10">
+                        <div className="flex-1 space-y-4">
+                            <span className="text-accent font-bold tracking-[0.3em] uppercase text-sm block">
+                                Custom Orders
+                            </span>
+                            <h2 className="text-3xl md:text-5xl font-display">
+                                Something Unique<br />in Mind?
+                            </h2>
+                            <p className="text-foreground/60 leading-relaxed max-w-lg">
+                                We craft bespoke pieces tailored to your vision. Share your requirements — style, colour, material, size, occasion — and upload reference images. To keep enquiries genuine, we verify your identity before you fill the form.
+                            </p>
+                            <ul className="space-y-2 pt-2">
+                                {[
+                                    "Verify your email & mobile number",
+                                    "Fill the custom order enquiry form",
+                                    "Our team contacts you within 24–48 hrs",
+                                ].map((step, i) => (
+                                    <li key={i} className="flex items-center gap-3 text-sm text-foreground/70">
+                                        <span className="w-6 h-6 rounded-full bg-accent/10 text-accent flex items-center justify-center text-xs font-bold shrink-0">
+                                            {i + 1}
+                                        </span>
+                                        {step}
+                                    </li>
+                                ))}
+                            </ul>
                         </div>
 
-                        <div className="space-y-2">
-                            <label className="text-xs uppercase tracking-widest font-semibold opacity-50">Phone Number (Optional)</label>
-                            <input
-                                type="tel"
-                                placeholder="+91 00000 00000"
-                                value={enquiryData.phone}
-                                onChange={e => setEnquiryData({ ...enquiryData, phone: e.target.value })}
-                                disabled={enquiryLoading}
-                                className="w-full bg-transparent border-b border-foreground/10 py-3 outline-none focus:border-accent transition-colors"
-                            />
-                        </div>
-
-                        <div className="space-y-2">
-                            <label className="text-xs uppercase tracking-widest font-semibold opacity-50">Describe Your Product *</label>
-                            <textarea
-                                required
-                                rows={5}
-                                placeholder="Describe the product you want — style, colour, material, size, quantity, occasion, or anything else that helps us understand your vision..."
-                                value={enquiryData.message}
-                                onChange={e => setEnquiryData({ ...enquiryData, message: e.target.value })}
-                                disabled={enquiryLoading}
-                                className="w-full bg-transparent border-b border-foreground/10 py-3 outline-none focus:border-accent transition-colors resize-none"
-                            />
-                        </div>
-
-                        {/* Image Upload */}
-                        <div className="space-y-4">
-                            <label className="text-xs uppercase tracking-widest font-semibold opacity-50">
-                                Reference Images (up to 5)
-                            </label>
-
-                            <input
-                                ref={fileInputRef}
-                                type="file"
-                                accept="image/*"
-                                multiple
-                                className="hidden"
-                                onChange={handleImageSelect}
-                                disabled={enquiryLoading || enquiryImages.length >= 5}
-                            />
-
-                            {/* Upload trigger */}
-                            {enquiryImages.length < 5 && (
-                                <button
-                                    type="button"
-                                    onClick={() => fileInputRef.current?.click()}
-                                    disabled={enquiryLoading}
-                                    className="w-full border-2 border-dashed border-foreground/10 hover:border-accent/40 transition-colors py-10 flex flex-col items-center gap-3 text-foreground/40 hover:text-accent group"
-                                >
-                                    <LucideIcons.Upload size={28} className="group-hover:scale-110 transition-transform" />
-                                    <span className="text-sm font-medium">Click to upload images</span>
-                                    <span className="text-xs">JPG, PNG, WEBP up to 10MB each</span>
-                                </button>
-                            )}
-
-                            {/* Image previews */}
-                            {enquiryImages.length > 0 && (
-                                <div className="grid grid-cols-3 sm:grid-cols-5 gap-4">
-                                    {enquiryImages.map((img, i) => (
-                                        <div key={i} className="relative aspect-square group">
-                                            <img
-                                                src={URL.createObjectURL(img)}
-                                                alt={`Reference ${i + 1}`}
-                                                className="w-full h-full object-cover"
-                                            />
-                                            <button
-                                                type="button"
-                                                onClick={() => removeImage(i)}
-                                                className="absolute top-1 right-1 w-6 h-6 bg-red-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                                            >
-                                                <LucideIcons.X size={12} />
-                                            </button>
-                                        </div>
-                                    ))}
-                                    {enquiryImages.length < 5 && (
-                                        <button
-                                            type="button"
-                                            onClick={() => fileInputRef.current?.click()}
-                                            className="aspect-square border-2 border-dashed border-foreground/10 hover:border-accent/40 flex items-center justify-center text-foreground/30 hover:text-accent transition-colors"
-                                        >
-                                            <LucideIcons.Plus size={20} />
-                                        </button>
-                                    )}
-                                </div>
+                        <div className="shrink-0">
+                            <Button
+                                size="lg"
+                                onClick={handleEnquiryCtaClick}
+                                className="h-16 px-10 rounded-none bg-primary text-white hover:bg-accent transition-all group whitespace-nowrap"
+                            >
+                                Start Custom Enquiry
+                                <LucideIcons.ArrowRight className="ml-2 group-hover:translate-x-2 transition-transform" />
+                            </Button>
+                            {!session?.user && (
+                                <p className="text-xs text-foreground/40 mt-3 text-center">
+                                    Login required to proceed
+                                </p>
                             )}
                         </div>
-
-                        <Button
-                            type="submit"
-                            size="lg"
-                            disabled={enquiryLoading}
-                            className="w-full h-16 rounded-none bg-primary text-white hover:bg-accent transition-all group disabled:opacity-50"
-                        >
-                            {enquiryLoading ? "Submitting..." : "Submit Enquiry"}
-                            {!enquiryLoading && <LucideIcons.ArrowRight className="ml-2 group-hover:translate-x-2 transition-transform" />}
-                        </Button>
-                    </form>
+                    </div>
                 </motion.div>
             </section>
+
+            {showVerifyModal && session?.user && (
+                <InquiryModal
+                    userEmail={session.user.email}
+                    userName={session.user.name || ""}
+                    onClose={() => setShowVerifyModal(false)}
+                    onVerified={handleVerified}
+                />
+            )}
 
             {/* Map Placeholder */}
             <section className="container mx-auto px-6 mt-32">

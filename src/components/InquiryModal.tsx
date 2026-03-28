@@ -13,11 +13,12 @@ interface Props {
     userEmail: string;
     userName: string;
     onClose: () => void;
+    onVerified?: (phone: string) => void;
 }
 
 const OTP_LENGTH = 6;
 
-export function InquiryModal({ userEmail, userName, onClose }: Props) {
+export function InquiryModal({ userEmail, userName, onClose, onVerified }: Props) {
     const [step, setStep] = useState<Step>("email");
 
     // Email step
@@ -200,6 +201,10 @@ export function InquiryModal({ userEmail, userName, onClose }: Props) {
             });
             const data = await res.json();
             if (!data.success) throw new Error(data.error);
+            sessionStorage.setItem(
+                `enquiry_verified_${userEmail}`,
+                JSON.stringify({ phone, verifiedAt: Date.now() })
+            );
             setStep("success");
         } catch (err: any) {
             setPhoneError(err.message || "Verification failed.");
@@ -577,10 +582,20 @@ export function InquiryModal({ userEmail, userName, onClose }: Props) {
                                     >
                                         <Button
                                             size="lg"
-                                            className="w-full h-14 rounded-none bg-primary text-white hover:bg-accent transition-all"
-                                            onClick={onClose}
+                                            className="w-full h-14 rounded-none bg-primary text-white hover:bg-accent transition-all group"
+                                            onClick={() => {
+                                                if (onVerified) {
+                                                    onVerified(phone);
+                                                } else {
+                                                    onClose();
+                                                }
+                                            }}
                                         >
-                                            Done
+                                            {onVerified ? (
+                                                <>Proceed to Enquiry Form <ArrowRight size={16} className="ml-2 group-hover:translate-x-1 transition-transform" /></>
+                                            ) : (
+                                                "Done"
+                                            )}
                                         </Button>
                                     </motion.div>
                                 </motion.div>

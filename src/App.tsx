@@ -13,6 +13,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 
 import Wishlist from "./pages/Wishlist";
+import EnquiryForm from "./pages/EnquiryForm";
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
               <Route path="shop/:id" element={<ProductDetail />} />
               <Route path="cart" element={<Cart />} />
               <Route path="wishlist" element={<Wishlist />} />
+              <Route path="enquiry" element={<EnquiryForm />} />
               <Route path="login" element={<Login />} />
               <Route path="signup" element={<Signup />} />
             </Route>
