@@ -1,7 +1,8 @@
-import { Suspense, lazy } from "react";
+import { Suspense, lazy, useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { Navbar } from "../components/Navbar";
-import { useEffect } from "react";
+import { TopRibbon } from "../components/TopRibbon";
+import { RibbonProvider } from "../context/RibbonContext";
 
 const Footer = lazy(() => import("../components/Footer").then(m => ({ default: m.Footer })));
 
@@ -14,8 +15,11 @@ export default function Layout() {
     }, [pathname]);
 
     return (
-        <div className="min-h-screen selection:bg-accent/30 selection:text-white relative">
+        <RibbonProvider>
+        <div className="min-h-screen selection:bg-accent/30 selection:text-white relative flex flex-col">
             <div className="grain" />
+
+            <TopRibbon />
             <Navbar />
 
             <div className="pt-0"> {/* Padding managed in pages if needed */}
@@ -32,5 +36,6 @@ export default function Layout() {
                 <div className="absolute bottom-[10%] right-[0%] w-[50%] h-[50%] bg-primary/5 rounded-full blur-[120px]"></div>
             </div>
         </div>
+        </RibbonProvider>
     );
 }

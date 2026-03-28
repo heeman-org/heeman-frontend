@@ -6,9 +6,12 @@ import { cn } from "../lib/utils";
 import { Link, useLocation } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { useWishlist } from "../context/WishlistContext";
+import { useRibbon } from "../context/RibbonContext";
 import logo from "../assets/logo.png";
 
 import { authClient } from "../lib/auth-client";
+
+const RIBBON_HEIGHT = 36; // approximate height of the TopRibbon in px
 
 export const Navbar = () => {
     const [isScrolled, setIsScrolled] = useState(false);
@@ -21,6 +24,7 @@ export const Navbar = () => {
 
     const { data: session } = authClient.useSession();
     const isAuthenticated = !!session;
+    const { isVisible: isRibbonVisible } = useRibbon();
 
     const isHomePage = location.pathname === "/";
     const isDarkTheme = isScrolled || !isHomePage;
@@ -49,10 +53,11 @@ export const Navbar = () => {
                     y: 0,
                     paddingTop: isScrolled ? "12px" : "24px",
                     paddingBottom: isScrolled ? "12px" : "24px",
+                    top: isRibbonVisible && !isScrolled ? RIBBON_HEIGHT : 0,
                 }}
                 transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
                 className={cn(
-                    "fixed top-0 left-0 right-0 z-50 transition-colors duration-500 w-full",
+                    "fixed left-0 right-0 z-50 transition-colors duration-500 w-full",
                     isDarkTheme ? "glass border-b" : "bg-transparent"
                 )}
             >
