@@ -1,10 +1,10 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Trash2, Minus, Plus, ArrowRight, ShoppingBag, ShieldCheck, Truck, Tag, X, Loader2 } from "lucide-react";
+import { Trash2, Minus, Plus, ArrowRight, ShoppingBag, ShieldCheck, Truck, Tag, X, Loader2, Gift, ChevronRight, Lock, CheckCircle2, DollarSign, Hash } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import { Button } from "../components/ui/Button";
 import { authClient } from "../lib/auth-client";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { ENV } from "../config/env.config";
 
 interface AppliedCoupon {
@@ -12,6 +12,18 @@ interface AppliedCoupon {
     discountType: "PERCENTAGE" | "FIXED";
     discountValue: number;
     productIds: string[];
+}
+
+interface AvailableCoupon {
+    id: string;
+    code: string;
+    discountType: "PERCENTAGE" | "FIXED";
+    discountValue: number;
+    minOrderAmount: number | null;
+    minItemCount: number | null;
+    validUntil: string | null;
+    usageLimit: number | null;
+    usedCount: number;
 }
 
 export default function Cart() {
@@ -27,6 +39,13 @@ export default function Cart() {
     const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
     const [couponError, setCouponError] = useState("");
     const [couponSuccess, setCouponSuccess] = useState(false);
+
+    // Coupon picker state
+    const [isCouponPickerOpen, setIsCouponPickerOpen] = useState(false);
+    const [availableCoupons, setAvailableCoupons] = useState<AvailableCoupon[]>([]);
+    const [isLoadingCoupons, setIsLoadingCoupons] = useState(false);
+    const couponInputRef = useRef<HTMLInputElement>(null);
+    const pickerRef = useRef<HTMLDivElement>(null);
 
     // Initial calculations
     const shipping = subtotal > 5000 ? 0 : 150;
@@ -136,7 +155,83 @@ export default function Cart() {
         setCouponSuccess(false);
     };
 
-    // Removed subtotal drop check since minOrderAmount has been eliminated
+    // Coupon picker logic
+    const fetchAvailableCoupons = async () => {
+        setIsLoadingCoupons(true);
+        try {
+            const url = new URL(`${ENV.API_BASE_URL}/api/coupons/available`);
+            if (currentUserId) url.searchParams.append("userId", currentUserId);
+            const res = await fetch(url.toString());
+            if (res.ok) setAvailableCoupons(await res.json());
+        } catch {
+            setAvailableCoupons([]);
+        } finally {
+            setIsLoadingCoupons(false);
+        }
+    };
+
+    const openCouponPicker = () => {
+        setIsCouponPickerOpen(true);
+        fetchAvailableCoupons();
+    };
+
+    const getCouponEligibility = (coupon: AvailableCoupon) => {
+        const meetsAmount = !coupon.minOrderAmount || subtotal >= coupon.minOrderAmount;
+        const meetsItems = !coupon.minItemCount || totalItems >= coupon.minItemCount;
+        const withinUsage = coupon.usageLimit === null || coupon.usedCount < coupon.usageLimit;
+        return {
+            isEligible: meetsAmount && meetsItems && withinUsage,
+            amountShortfall: coupon.minOrderAmount ? Math.max(0, coupon.minOrderAmount - subtotal) : 0,
+            itemsShortfall: coupon.minItemCount ? Math.max(0, coupon.minItemCount - totalItems) : 0,
+        };
+    };
+
+    const applyFromPicker = async (code: string) => {
+        setIsCouponPickerOpen(false);
+        setCouponError("");
+        setCouponSuccess(false);
+        setIsApplyingCoupon(true);
+        try {
+            const url = new URL(`${ENV.API_BASE_URL}/api/coupons/code/${code}`);
+            if (currentUserId) url.searchParams.append("userId", currentUserId);
+            const response = await fetch(url.toString());
+            if (!response.ok) {
+                if (response.status === 403) throw new Error("This coupon is restricted to a different user account");
+                throw new Error("Invalid or expired coupon");
+            }
+            const data = await response.json();
+            if (!data.isActive) throw new Error("This coupon is no longer active");
+            const now = new Date();
+            if (new Date(data.validFrom) > now) throw new Error("This coupon is not valid yet");
+            if (data.validUntil && new Date(data.validUntil) < now) throw new Error("This coupon has expired");
+            if (data.usageLimit !== null && data.usedCount >= data.usageLimit) throw new Error("This coupon usage limit has been reached");
+            setAppliedCoupon({
+                code: data.code,
+                discountType: data.discountType,
+                discountValue: data.discountValue,
+                productIds: data.products.map((p: any) => p.id),
+            });
+            setCouponSuccess(true);
+        } catch (err: any) {
+            setCouponError(err.message || "Failed to apply coupon");
+        } finally {
+            setIsApplyingCoupon(false);
+        }
+    };
+
+    // Close picker when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (e: MouseEvent) => {
+            if (
+                pickerRef.current && !pickerRef.current.contains(e.target as Node) &&
+                couponInputRef.current && !couponInputRef.current.contains(e.target as Node)
+            ) {
+                setIsCouponPickerOpen(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
 
     return (
         <div className="pt-32 pb-24 min-h-[80vh]">
@@ -279,13 +374,15 @@ export default function Cart() {
                                         </button>
                                     </div>
                                 ) : (
-                                    <div>
+                                    <div className="relative">
                                         <div className="flex gap-4">
                                             <input
+                                                ref={couponInputRef}
                                                 type="text"
-                                                placeholder="Enter your discount code here"
+                                                placeholder="Enter code or browse available offers"
                                                 value={couponCode}
                                                 onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                                                onFocus={openCouponPicker}
                                                 className="flex-1 h-12 px-4 bg-white border border-foreground/10 focus:border-accent outline-none uppercase font-mono tracking-widest text-sm"
                                             />
                                             <Button
@@ -296,6 +393,7 @@ export default function Cart() {
                                                 {isApplyingCoupon ? <Loader2 className="animate-spin" size={16} /> : "Apply"}
                                             </Button>
                                         </div>
+
                                         {couponError && (
                                             <p className="text-red-500 text-xs font-bold uppercase tracking-widest mt-4">
                                                 {couponError}
@@ -306,6 +404,178 @@ export default function Cart() {
                                                 Coupon applied successfully!
                                             </p>
                                         )}
+
+                                        {/* Coupon Picker Popup */}
+                                        <AnimatePresence>
+                                            {isCouponPickerOpen && (
+                                                <motion.div
+                                                    ref={pickerRef}
+                                                    initial={{ opacity: 0, y: -8 }}
+                                                    animate={{ opacity: 1, y: 0 }}
+                                                    exit={{ opacity: 0, y: -8 }}
+                                                    transition={{ duration: 0.18 }}
+                                                    className="absolute top-full left-0 right-0 mt-2 bg-white border border-foreground/10 shadow-2xl z-50 overflow-hidden"
+                                                >
+                                                    {/* Picker Header */}
+                                                    <div className="flex items-center justify-between px-5 py-4 border-b border-foreground/5 bg-secondary/20">
+                                                        <div className="flex items-center gap-2">
+                                                            <Tag size={14} className="text-accent" />
+                                                            <span className="text-xs font-bold uppercase tracking-widest">Available Offers</span>
+                                                        </div>
+                                                        <button
+                                                            onClick={() => setIsCouponPickerOpen(false)}
+                                                            className="p-1 hover:bg-foreground/5 rounded transition-colors"
+                                                        >
+                                                            <X size={14} />
+                                                        </button>
+                                                    </div>
+
+                                                    <div className="max-h-[380px] overflow-y-auto">
+                                                        {isLoadingCoupons ? (
+                                                            <div className="py-12 flex flex-col items-center gap-3">
+                                                                <Loader2 size={20} className="animate-spin text-foreground/30" />
+                                                                <span className="text-xs font-bold uppercase tracking-widest text-foreground/30">
+                                                                    Loading offers...
+                                                                </span>
+                                                            </div>
+                                                        ) : availableCoupons.length === 0 ? (
+                                                            <div className="py-14 flex flex-col items-center gap-4 px-6 text-center">
+                                                                <div className="h-14 w-14 bg-secondary/40 flex items-center justify-center">
+                                                                    <Gift size={24} className="text-foreground/20" />
+                                                                </div>
+                                                                <div>
+                                                                    <p className="text-sm font-semibold mb-1">No offers available right now</p>
+                                                                    <p className="text-xs text-foreground/40 leading-relaxed max-w-xs">
+                                                                        Check back later — exclusive bulk discount codes will appear here when active.
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                        ) : (() => {
+                                                            const eligible = availableCoupons.filter(c => getCouponEligibility(c).isEligible);
+                                                            const locked = availableCoupons.filter(c => !getCouponEligibility(c).isEligible);
+                                                            return (
+                                                                <div>
+                                                                    {/* Eligible coupons */}
+                                                                    {eligible.length > 0 && (
+                                                                        <div>
+                                                                            <div className="px-5 py-2.5 bg-green-50 border-b border-green-100 flex items-center gap-2">
+                                                                                <CheckCircle2 size={12} className="text-green-600" />
+                                                                                <span className="text-[10px] font-bold uppercase tracking-widest text-green-700">
+                                                                                    Applicable to your order ({eligible.length})
+                                                                                </span>
+                                                                            </div>
+                                                                            {eligible.map((coupon) => (
+                                                                                <div
+                                                                                    key={coupon.id}
+                                                                                    className="flex items-center justify-between px-5 py-4 border-b border-foreground/5 hover:bg-green-50/50 transition-colors group cursor-pointer"
+                                                                                    onClick={() => applyFromPicker(coupon.code)}
+                                                                                >
+                                                                                    <div className="flex-1 min-w-0">
+                                                                                        <div className="flex items-center gap-3 mb-1">
+                                                                                            <span className="font-mono font-bold text-sm tracking-wider">{coupon.code}</span>
+                                                                                            <span className="text-accent font-bold text-xs">
+                                                                                                {coupon.discountType === "PERCENTAGE"
+                                                                                                    ? `${coupon.discountValue}% off`
+                                                                                                    : formatPrice(coupon.discountValue) + " off"}
+                                                                                            </span>
+                                                                                        </div>
+                                                                                        <div className="flex items-center gap-3 text-[10px] text-foreground/40 font-medium">
+                                                                                            {coupon.minOrderAmount ? (
+                                                                                                <span className="flex items-center gap-1 text-green-600">
+                                                                                                    <CheckCircle2 size={9} />
+                                                                                                    Min. {formatPrice(coupon.minOrderAmount)}
+                                                                                                </span>
+                                                                                            ) : (
+                                                                                                <span className="flex items-center gap-1 text-green-600">
+                                                                                                    <CheckCircle2 size={9} />
+                                                                                                    Any order value
+                                                                                                </span>
+                                                                                            )}
+                                                                                            {coupon.minItemCount ? (
+                                                                                                <span className="flex items-center gap-1 text-green-600">
+                                                                                                    <CheckCircle2 size={9} />
+                                                                                                    {coupon.minItemCount}+ items
+                                                                                                </span>
+                                                                                            ) : (
+                                                                                                <span className="flex items-center gap-1 text-green-600">
+                                                                                                    <CheckCircle2 size={9} />
+                                                                                                    Any quantity
+                                                                                                </span>
+                                                                                            )}
+                                                                                            {coupon.validUntil && (
+                                                                                                <span>Expires {new Date(coupon.validUntil).toLocaleDateString()}</span>
+                                                                                            )}
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div className="flex items-center gap-1 text-accent text-[10px] font-bold uppercase tracking-widest ml-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                                                        Apply <ChevronRight size={12} />
+                                                                                    </div>
+                                                                                </div>
+                                                                            ))}
+                                                                        </div>
+                                                                    )}
+
+                                                                    {/* Locked coupons */}
+                                                                    {locked.length > 0 && (
+                                                                        <div>
+                                                                            <div className="px-5 py-2.5 bg-secondary/30 border-b border-foreground/5 flex items-center gap-2">
+                                                                                <Lock size={11} className="text-foreground/40" />
+                                                                                <span className="text-[10px] font-bold uppercase tracking-widest text-foreground/40">
+                                                                                    Add more to unlock ({locked.length})
+                                                                                </span>
+                                                                            </div>
+                                                                            {locked.map((coupon) => {
+                                                                                const { amountShortfall, itemsShortfall } = getCouponEligibility(coupon);
+                                                                                return (
+                                                                                    <div
+                                                                                        key={coupon.id}
+                                                                                        className="flex items-center justify-between px-5 py-4 border-b border-foreground/5 opacity-60"
+                                                                                    >
+                                                                                        <div className="flex-1 min-w-0">
+                                                                                            <div className="flex items-center gap-3 mb-1">
+                                                                                                <span className="font-mono font-bold text-sm tracking-wider text-foreground/50">{coupon.code}</span>
+                                                                                                <span className="font-bold text-xs text-foreground/40">
+                                                                                                    {coupon.discountType === "PERCENTAGE"
+                                                                                                        ? `${coupon.discountValue}% off`
+                                                                                                        : formatPrice(coupon.discountValue) + " off"}
+                                                                                                </span>
+                                                                                            </div>
+                                                                                            <div className="flex items-center gap-3 text-[10px] font-medium text-foreground/40">
+                                                                                                {amountShortfall > 0 && (
+                                                                                                    <span className="flex items-center gap-1 text-amber-600">
+                                                                                                        <DollarSign size={9} />
+                                                                                                        Add {formatPrice(amountShortfall)} more
+                                                                                                    </span>
+                                                                                                )}
+                                                                                                {itemsShortfall > 0 && (
+                                                                                                    <span className="flex items-center gap-1 text-amber-600">
+                                                                                                        <Hash size={9} />
+                                                                                                        Add {itemsShortfall} more item{itemsShortfall > 1 ? "s" : ""}
+                                                                                                    </span>
+                                                                                                )}
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <Lock size={14} className="text-foreground/20 ml-4 flex-shrink-0" />
+                                                                                    </div>
+                                                                                );
+                                                                            })}
+                                                                        </div>
+                                                                    )}
+
+                                                                    {eligible.length === 0 && locked.length > 0 && (
+                                                                        <div className="px-5 py-3 bg-amber-50 border-t border-amber-100">
+                                                                            <p className="text-[10px] font-medium text-amber-700">
+                                                                                Keep adding items to unlock exclusive bulk discounts.
+                                                                            </p>
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+                                                            );
+                                                        })()}
+                                                    </div>
+                                                </motion.div>
+                                            )}
+                                        </AnimatePresence>
                                     </div>
                                 )}
                             </motion.div>
