@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { authClient } from "../lib/auth-client";
 import { Button } from "../components/ui/Button";
 import { User, Mail, Lock, ArrowRight, Loader2 } from "lucide-react";
 
 export default function Signup() {
+    const [searchParams] = useSearchParams();
     const [name, setName] = useState("");
-    const [email, setEmail] = useState("");
+    const [email, setEmail] = useState(() => searchParams.get("email") || "");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
@@ -30,7 +31,7 @@ export default function Signup() {
             } else {
                 navigate("/");
             }
-        } catch (err: any) {
+        } catch {
             setError("Something went wrong. Please try again.");
         } finally {
             setLoading(false);
