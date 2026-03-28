@@ -1,11 +1,12 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Trash2, Minus, Plus, ArrowRight, ShoppingBag, ShieldCheck, Truck, Tag, X, Loader2, Gift, ChevronRight, Lock, CheckCircle2, IndianRupee, Hash } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import { Button } from "../components/ui/Button";
 import { authClient } from "../lib/auth-client";
 import { useState, useRef, useEffect } from "react";
 import { ENV } from "../config/env.config";
+import { InquiryModal } from "../components/InquiryModal";
 
 interface AppliedCoupon {
     code: string;
@@ -28,10 +29,14 @@ interface AvailableCoupon {
 
 export default function Cart() {
     const { cart, removeFromCart, updateQuantity, subtotal, totalItems } = useCart();
+    const navigate = useNavigate();
 
     // Auth state for user specific validation
     const { data: session } = authClient.useSession();
     const currentUserId = session?.user?.id;
+
+    // Inquiry modal state
+    const [isInquiryOpen, setIsInquiryOpen] = useState(false);
 
     // Coupon state
     const [couponCode, setCouponCode] = useState("");
@@ -235,6 +240,7 @@ export default function Cart() {
     }, []);
 
     return (
+        <>
         <div className="pt-32 pb-24 min-h-[80vh]">
             <div className="container mx-auto px-6">
                 {/* Header */}
@@ -623,8 +629,18 @@ export default function Cart() {
                                     </div>
                                 </div>
 
-                                <Button size="lg" className="w-full h-16 rounded-none bg-accent hover:bg-white hover:text-primary transition-all group border-none relative z-10">
-                                    Proceed to Payment <ArrowRight className="ml-2 group-hover:translate-x-2 transition-transform" />
+                                <Button
+                                    size="lg"
+                                    className="w-full h-16 rounded-none bg-accent hover:bg-white hover:text-primary transition-all group border-none relative z-10"
+                                    onClick={() => {
+                                        if (!session?.user) {
+                                            navigate("/login", { state: { message: "Please log in to submit an enquiry." } });
+                                        } else {
+                                            setIsInquiryOpen(true);
+                                        }
+                                    }}
+                                >
+                                    Enquiry Now <ArrowRight className="ml-2 group-hover:translate-x-2 transition-transform" />
                                 </Button>
 
                                 {/* Decorative */}
@@ -642,5 +658,15 @@ export default function Cart() {
                 )}
             </div>
         </div>
+
+        {/* Inquiry verification modal */}
+        {isInquiryOpen && session?.user && (
+            <InquiryModal
+                userEmail={session.user.email}
+                userName={session.user.name || "there"}
+                onClose={() => setIsInquiryOpen(false)}
+            />
+        )}
+        </>
     );
 }

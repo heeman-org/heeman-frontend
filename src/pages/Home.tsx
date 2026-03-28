@@ -8,6 +8,7 @@ const FeaturedProducts = lazy(() => import("../components/FeaturedProducts").the
 const AboutUs = lazy(() => import("../components/AboutUs").then(m => ({ default: m.AboutUs })));
 const Process = lazy(() => import("../components/Process").then(m => ({ default: m.Process })));
 const Testimonials = lazy(() => import("../components/Testimonials").then(m => ({ default: m.Testimonials })));
+const CustomProducts = lazy(() => import("../components/CustomProducts").then(m => ({ default: m.CustomProducts })));
 
 const SectionLoader = () => (
     <div className="py-24 container mx-auto px-6">
@@ -46,6 +47,10 @@ export default function Home() {
 
             <Suspense fallback={<SectionLoader />}>
                 <FeaturedProducts />
+            </Suspense>
+
+            <Suspense fallback={<SectionLoader />}>
+                <CustomProducts />
             </Suspense>
 
             <Suspense fallback={<SectionLoader />}>
