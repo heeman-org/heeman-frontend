@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { ShoppingBag, Search, Menu, X, User } from "lucide-react";
+import { ShoppingBag, Search, Menu, X, User, Heart } from "lucide-react";
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
 import { Button } from "./ui/Button";
 import { cn } from "../lib/utils";
 import { Link, useLocation } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import { useWishlist } from "../context/WishlistContext";
 import logo from "../assets/logo.png";
 
 import { authClient } from "../lib/auth-client";
@@ -15,6 +16,7 @@ export const Navbar = () => {
     const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
     const { scrollY } = useScroll();
     const { totalItems } = useCart();
+    const { wishlist } = useWishlist();
     const location = useLocation();
 
     const { data: session } = authClient.useSession();
@@ -140,6 +142,22 @@ export const Navbar = () => {
                                     )}
                                 </AnimatePresence>
                             </div>
+
+                            <div className={cn("w-[1px] h-4 bg-current opacity-10")} />
+                            <Link to="/wishlist">
+                                <Button variant="ghost" size="icon" className={cn("size-8 rounded-full relative", isDarkTheme ? "text-primary" : "text-white")}>
+                                    <Heart size={16} />
+                                    {wishlist.length > 0 && (
+                                        <motion.span
+                                            initial={{ scale: 0 }}
+                                            animate={{ scale: 1 }}
+                                            className="absolute top-1 right-1 w-3.5 h-3.5 bg-accent rounded-full border border-white text-[9px] flex items-center justify-center font-bold text-white shadow-sm"
+                                        >
+                                            {wishlist.length}
+                                        </motion.span>
+                                    )}
+                                </Button>
+                            </Link>
 
                             <div className={cn("w-[1px] h-4 bg-current opacity-10")} />
                             <Link to="/cart">

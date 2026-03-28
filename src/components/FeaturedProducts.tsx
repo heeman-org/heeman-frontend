@@ -7,10 +7,12 @@ import { useProducts } from "../hooks/useProducts";
 import { useCart } from "../context/CartContext";
 import { type Product } from "../data/products";
 import { FeaturedProductSkeleton } from "./ProductGridSkeleton";
+import { useWishlist } from "../context/WishlistContext";
 
 export const FeaturedProducts = () => {
     const { products, loading: productsLoading } = useProducts();
     const { addToCart } = useCart();
+    const { toggleWishlist, isInWishlist } = useWishlist();
     const [lastAdded, setLastAdded] = useState<string | null>(null);
     const { landingConstants, loading: constantsLoading } = useConstants();
 
@@ -59,8 +61,13 @@ export const FeaturedProducts = () => {
                                             </span>
                                         </div>
                                         <div className="absolute top-4 right-4 z-10">
-                                            <Button variant="ghost" size="icon" className="bg-white/80 hover:bg-white rounded-full opacity-0 group-hover:opacity-100 transition-all translate-y-2 group-hover:translate-y-0">
-                                                <Heart size={16} />
+                                            <Button 
+                                                variant="ghost" 
+                                                size="icon" 
+                                                onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleWishlist(p); }}
+                                                className={`bg-white/80 hover:bg-white rounded-full transition-all translate-y-2 group-hover:translate-y-0 ${isInWishlist(p.id) ? 'opacity-100 text-red-500' : 'opacity-0 group-hover:opacity-100'}`}
+                                            >
+                                                <Heart size={16} fill={isInWishlist(p.id) ? "currentColor" : "none"} />
                                             </Button>
                                         </div>
                                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none group-hover:pointer-events-auto">
@@ -116,7 +123,7 @@ export const FeaturedProducts = () => {
                 )}
 
                 <div className="mt-20 text-center">
-                    <Button variant="outline" size="lg" className="px-16 border-foreground/10 hover:border-accent">
+                    <Button variant="outline" size="lg" className="px-16 border-foreground/10 hover:border-accent" onClick={() => window.location.href = "/shop"}>
                         {landingConstants.featuredProducts.viewAllButton}
                     </Button>
                 </div>

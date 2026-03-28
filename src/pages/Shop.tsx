@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useSearchParams } from "react-router-dom";
 import {
-    ArrowRight, Star,
+    ArrowRight, Star, Heart,
     ShoppingBag, CheckCircle2, X, Filter, Check
 } from "lucide-react";
 import { Button } from "../components/ui/Button";
@@ -10,6 +10,7 @@ import { type Product } from "../data/products";
 import { useProducts } from "../hooks/useProducts";
 import { cn } from "../lib/utils";
 import { useCart } from "../context/CartContext";
+import { useWishlist } from "../context/WishlistContext";
 import { ShopFilterSidebar, type SortOption } from "../components/ShopFilterSidebar";
 import { ShopFilterBar } from "../components/ShopFilterBar";
 import { ShopGridSkeleton } from "../components/ProductGridSkeleton";
@@ -30,6 +31,7 @@ export default function Shop() {
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [lastAdded, setLastAdded] = useState<string | null>(null);
     const { addToCart } = useCart();
+    const { toggleWishlist, isInWishlist } = useWishlist();
 
     useEffect(() => {
         const params = new URLSearchParams();
@@ -196,6 +198,18 @@ export default function Shop() {
 
                                     {/* Actions Overlay */}
                                     <div className="absolute top-6 right-6 flex flex-col gap-3 translate-x-12 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-500 z-10">
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleWishlist(p); }}
+                                            className={cn(
+                                                "bg-white/95 backdrop-blur-md rounded-full size-10 shadow-sm border border-black/5 transition-all ring-0 focus:ring-0",
+                                                isInWishlist(p.id) ? "text-red-500 bg-red-50" : "hover:bg-accent hover:text-white"
+                                            )}
+                                        >
+                                            <Heart size={16} fill={isInWishlist(p.id) ? "currentColor" : "none"} />
+                                        </Button>
+
                                         <Button
                                             variant="ghost"
                                             size="icon"

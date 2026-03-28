@@ -67,7 +67,7 @@ export const AboutUs = () => {
                             <p key={i}>{p}</p>
                         ))}
                     </div>
-                    <Button variant="outline" className="group">
+                    <Button variant="outline" className="group" onClick={() => window.location.href = "/about"}>
                         {landingConstants.aboutUs.buttonText} <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" size={18} />
                     </Button>
                 </motion.div>

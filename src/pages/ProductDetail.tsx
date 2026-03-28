@@ -12,6 +12,7 @@ import { useProduct } from "../hooks/useProduct";
 import { useProducts } from "../hooks/useProducts";
 import { cn } from "../lib/utils";
 import { useCart } from "../context/CartContext";
+import { useWishlist } from "../context/WishlistContext";
 import { ProductDetailSkeleton } from "../components/ProductDetailSkeleton";
 
 export default function ProductDetail() {
@@ -23,6 +24,7 @@ export default function ProductDetail() {
     const [activeTab, setActiveTab] = useState("description");
     const [addedToCart, setAddedToCart] = useState(false);
     const { addToCart } = useCart();
+    const { toggleWishlist, isInWishlist } = useWishlist();
 
     useEffect(() => {
         if (product) {
@@ -120,8 +122,16 @@ export default function ProductDetail() {
                                     <Button variant="ghost" size="icon" className="rounded-full shadow-sm border border-foreground/5 bg-white">
                                         <Share2 size={16} />
                                     </Button>
-                                    <Button variant="ghost" size="icon" className="rounded-full shadow-sm border border-foreground/5 bg-white">
-                                        <Heart size={16} />
+                                    <Button 
+                                        variant="ghost" 
+                                        size="icon" 
+                                        onClick={() => toggleWishlist(product)}
+                                        className={cn(
+                                            "rounded-full shadow-sm border border-foreground/5 bg-white transition-colors",
+                                            isInWishlist(product.id) ? "text-red-500 hover:text-red-600 bg-red-50 hover:bg-red-100" : ""
+                                        )}
+                                    >
+                                        <Heart size={16} fill={isInWishlist(product.id) ? "currentColor" : "none"} />
                                     </Button>
                                 </div>
                             </div>

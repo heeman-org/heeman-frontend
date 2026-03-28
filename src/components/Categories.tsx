@@ -33,7 +33,7 @@ export const Categories = () => {
                     <h2 className="text-accent font-medium tracking-[0.2em] uppercase text-sm mb-6 block">{landingConstants.categories.subtitle}</h2>
                     <h2 className="text-4xl md:text-5xl font-display leading-tight">{landingConstants.categories.titleLine1} <br /><span className="font-medium">{landingConstants.categories.titleLine2}</span></h2>
                 </div>
-                <a href="#" className="flex items-center gap-4 group font-medium pb-2 border-b border-foreground/10 hover:border-accent transition-colors">
+                <a href="/shop" className="flex items-center gap-4 group font-medium pb-2 border-b border-foreground/10 hover:border-accent transition-colors">
                     {landingConstants.categories.browseText} <ArrowRight className="group-hover:translate-x-1 transition-transform" size={20} />
                 </a>
             </div>
