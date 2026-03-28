@@ -27,6 +27,29 @@ interface AvailableCoupon {
     usedCount: number;
 }
 
+interface ExtraCharge { label: string; amount: number; percent: number; }
+interface BillingConfig {
+    gstPercent: number;
+    gstLabel: string;
+    shippingCharge: number;
+    freeShippingThreshold: number;
+    shippingLabel: string;
+    handlingCharge: number;
+    handlingLabel: string;
+    extraCharges: ExtraCharge[];
+}
+
+const DEFAULT_BILLING: BillingConfig = {
+    gstPercent: 18,
+    gstLabel: "GST",
+    shippingCharge: 150,
+    freeShippingThreshold: 5000,
+    shippingLabel: "Delivery Charges",
+    handlingCharge: 0,
+    handlingLabel: "Production Handling",
+    extraCharges: [],
+};
+
 export default function Cart() {
     const { cart, removeFromCart, updateQuantity, subtotal, totalItems } = useCart();
     const navigate = useNavigate();
@@ -37,6 +60,15 @@ export default function Cart() {
 
     // Inquiry modal state
     const [isInquiryOpen, setIsInquiryOpen] = useState(false);
+
+    // Billing config from backend
+    const [billing, setBilling] = useState<BillingConfig>(DEFAULT_BILLING);
+    useEffect(() => {
+        fetch(`${ENV.API_BASE_URL}/api/billing`)
+            .then(r => r.json())
+            .then(d => { if (d.success && d.config) setBilling({ ...DEFAULT_BILLING, ...d.config, extraCharges: Array.isArray(d.config.extraCharges) ? d.config.extraCharges : [] }); })
+            .catch(() => {}); // silently fall back to defaults
+    }, []);
 
     // Coupon state
     const [couponCode, setCouponCode] = useState("");
@@ -52,8 +84,10 @@ export default function Cart() {
     const couponInputRef = useRef<HTMLInputElement>(null);
     const pickerRef = useRef<HTMLDivElement>(null);
 
-    // Initial calculations
-    const shipping = subtotal > 5000 ? 0 : 150;
+    // Shipping from billing config
+    const shipping = billing.freeShippingThreshold > 0 && subtotal >= billing.freeShippingThreshold
+        ? 0
+        : billing.shippingCharge;
 
     // Calculate eligible amount for discount
     const eligibleAmount = appliedCoupon
@@ -81,8 +115,14 @@ export default function Cart() {
     }
 
     const subtotalAfterDiscount = Math.max(0, subtotal - discountAmount);
-    const tax = subtotalAfterDiscount * 0.18;
-    const total = subtotalAfterDiscount + shipping + tax;
+    const tax = subtotalAfterDiscount * (billing.gstPercent / 100);
+    const handling = billing.handlingCharge;
+    const extraChargesComputed = billing.extraCharges.map(c => ({
+        label: c.label,
+        value: c.percent > 0 ? subtotalAfterDiscount * (c.percent / 100) : c.amount,
+    }));
+    const total = subtotalAfterDiscount + shipping + tax + handling
+        + extraChargesComputed.reduce((s, c) => s + c.value, 0);
 
     const formatPrice = (amount: number) => {
         return new Intl.NumberFormat("en-IN", {
@@ -607,11 +647,26 @@ export default function Cart() {
                                     )}
 
                                     <div className="flex justify-between text-sm">
-                                        <span className="opacity-50">White Glove Delivery</span>
-                                        <span className="font-bold">{shipping === 0 ? "Complimentary" : formatPrice(shipping)}</span>
+                                        <span className="opacity-50">{billing.shippingLabel}</span>
+                                        <span className="font-bold">{shipping === 0 ? "Free" : formatPrice(shipping)}</span>
                                     </div>
+
+                                    {handling > 0 && (
+                                        <div className="flex justify-between text-sm">
+                                            <span className="opacity-50">{billing.handlingLabel}</span>
+                                            <span className="font-bold">{formatPrice(handling)}</span>
+                                        </div>
+                                    )}
+
+                                    {extraChargesComputed.map((c, i) => c.value > 0 && (
+                                        <div key={i} className="flex justify-between text-sm">
+                                            <span className="opacity-50">{c.label}</span>
+                                            <span className="font-bold">{formatPrice(c.value)}</span>
+                                        </div>
+                                    ))}
+
                                     <div className="flex justify-between text-sm pb-6 border-b border-white/10">
-                                        <span className="opacity-50">Est. Luxury Tax (18%)</span>
+                                        <span className="opacity-50">{billing.gstLabel} ({billing.gstPercent}%)</span>
                                         <span className="font-bold">{formatPrice(tax)}</span>
                                     </div>
                                     <div className="flex justify-between text-2xl font-display pt-2">
@@ -622,10 +677,13 @@ export default function Cart() {
 
                                 <div className="space-y-4 mb-10 relative z-10">
                                     <div className="flex items-center gap-4 text-xs uppercase tracking-widest opacity-70">
-                                        <ShieldCheck size={14} className="text-accent" /> Secure Bespoke Checkout
+                                        <ShieldCheck size={14} className="text-accent" /> Secure Checkout
                                     </div>
                                     <div className="flex items-center gap-4 text-xs uppercase tracking-widest opacity-70">
-                                        <Truck size={14} className="text-accent" /> Premium Handling Included
+                                        <Truck size={14} className="text-accent" />
+                                        {billing.freeShippingThreshold > 0
+                                            ? `Free delivery above ${formatPrice(billing.freeShippingThreshold)}`
+                                            : billing.shippingLabel}
                                     </div>
                                 </div>
 
