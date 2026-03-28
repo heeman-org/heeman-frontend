@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Trash2, Minus, Plus, ArrowRight, ShoppingBag, ShieldCheck, Truck, Tag, X, Loader2, Gift, ChevronRight, Lock, CheckCircle2, DollarSign, Hash } from "lucide-react";
+import { Trash2, Minus, Plus, ArrowRight, ShoppingBag, ShieldCheck, Truck, Tag, X, Loader2, Gift, ChevronRight, Lock, CheckCircle2, IndianRupee, Hash } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import { Button } from "../components/ui/Button";
 import { authClient } from "../lib/auth-client";
@@ -55,7 +55,7 @@ export default function Cart() {
         ? appliedCoupon.productIds.length > 0
             ? cart.reduce((sum, item) => {
                 if (appliedCoupon.productIds.includes(item.id)) {
-                    const price = parseFloat(item.price.replace(/[$,]/g, ""));
+                    const price = parseFloat(item.price.replace(/[₹,]/g, ""));
                     return sum + (price * item.quantity);
                 }
                 return sum;
@@ -80,9 +80,10 @@ export default function Cart() {
     const total = subtotalAfterDiscount + shipping + tax;
 
     const formatPrice = (amount: number) => {
-        return new Intl.NumberFormat("en-US", {
+        return new Intl.NumberFormat("en-IN", {
             style: "currency",
-            currency: "USD",
+            currency: "INR",
+            maximumFractionDigits: 0,
         }).format(amount);
     };
 
@@ -332,7 +333,7 @@ export default function Cart() {
                                                 <div className="text-right">
                                                     <p className="text-xs uppercase tracking-widest font-semibold opacity-40 mb-1">Total</p>
                                                     <span className="text-xl font-display text-accent">
-                                                        {formatPrice(parseFloat(item.price.replace(/[$,]/g, "")) * item.quantity)}
+                                                        {formatPrice(parseFloat(item.price.replace(/[₹,]/g, "")) * item.quantity)}
                                                     </span>
                                                 </div>
                                             </div>
@@ -543,7 +544,7 @@ export default function Cart() {
                                                                                             <div className="flex items-center gap-3 text-[10px] font-medium text-foreground/40">
                                                                                                 {amountShortfall > 0 && (
                                                                                                     <span className="flex items-center gap-1 text-amber-600">
-                                                                                                        <DollarSign size={9} />
+                                                                                                        <IndianRupee size={9} />
                                                                                                         Add {formatPrice(amountShortfall)} more
                                                                                                     </span>
                                                                                                 )}

@@ -24,7 +24,7 @@ export function TopRibbon() {
                             at checkout to get{" "}
                             {coupon.discountType === "PERCENTAGE"
                                 ? `${coupon.discountValue}%`
-                                : `$${coupon.discountValue}`}{" "}
+                                : `₹${coupon.discountValue}`}{" "}
                             off your entire order for free!
                         </span>
                     </div>

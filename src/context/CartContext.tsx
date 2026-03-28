@@ -59,7 +59,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
 
     const subtotal = cart.reduce((sum, item) => {
-        const price = parseFloat(item.price.replace(/[$,]/g, ""));
+        const price = parseFloat(item.price.replace(/[₹,]/g, ""));
         return sum + price * item.quantity;
     }, 0);
 
