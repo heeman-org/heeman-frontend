@@ -1,73 +1,43 @@
-# React + TypeScript + Vite
+# Heeman Storefront
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is the customer-facing e-commerce storefront for Heeman. It provides a seamless, immersive, and responsive shopping experience allowing users to browse products, manage wishlists, discover categories, and submit custom inquiries.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Dynamic Catalog:** Browse products across multiple categories with details on size, color, materials, and extended features.
+- **User Accounts:** Seamless sign-up and login using `better-auth`.
+- **Wishlist:** Users can seamlessly add and track their favorite items.
+- **Coupons System:** Support for real-time validation of public, private, and global promos dynamically fetched from the backend.
+- **Custom Inquiries:** Allows customers to effortlessly reach out regarding product customizations, complete with image support.
+- **Responsive Animations:** Polished framer-motion micro-interactions for a premium shopping experience.
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Framework:** [React 19](https://react.dev) + [Vite](https://vitejs.dev/)
+- **Routing:** `react-router-dom`
+- **Styling:** [Tailwind CSS v4](https://tailwindcss.com/)
+- **Animations:** [Framer Motion](https://motion.dev/)
+- **Icons:** `lucide-react`
+- **Authentication:** `better-auth`
+- **Language:** TypeScript
 
-## Expanding the ESLint configuration
+## Getting Started
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+1. **Install Dependencies:**
+   ```bash
+   npm install
+   ```
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+2. **Environment Variables:**
+   Make sure to configure your backend API URLs. Replace or configure the `.env` attributes accordingly.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+3. **Start the Development Server:**
+   ```bash
+   npm run dev
+   ```
+   The site will be running at [http://localhost:5173](http://localhost:5173) by default.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+4. **Build for Production:**
+   ```bash
+   npm run build
+   ```
